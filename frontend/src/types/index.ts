@@ -10,7 +10,7 @@ export interface FarmerProfile {
   farm_size_acres: number;
   language: Language;
   profile_photo_url?: string | null;
-  user_role?: "farmer" | "buyer" | "storage" | "transport" | "coordinator";
+  user_role?: "farmer" | "buyer" | "storage" | "transport" | "coordinator" | "admin";
   // Buyer Profile Fields
   company_name?: string;
   buyer_type?: string;

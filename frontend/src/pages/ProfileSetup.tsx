@@ -6,7 +6,7 @@ import { CameraModal } from "../components/CameraModal";
 export const ProfileSetup: React.FC = () => {
   const { farmer, setFarmer, setScreen, setActiveTab } = useApp();
 
-  const [activeRole, setActiveRole] = useState<"farmer" | "buyer" | "storage" | "transport" | "coordinator">(
+  const [activeRole, setActiveRole] = useState<"farmer" | "buyer" | "storage" | "transport" | "coordinator" | "admin">(
     farmer.user_role || "farmer"
   );
 
