@@ -48,7 +48,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return (localStorage.getItem("sanjeevani_lang") as Language) || "en";
   });
   const [screen, setScreen] = useState<ScreenType>(() => {
-    return window.location.search.includes("screen=admin") ? "admin" : "landing";
+    const search = window.location.search.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+    if (search.includes("admin") || search.includes("screen=admin") || hash.includes("admin")) {
+      return "admin";
+    }
+    return "landing";
   });
   const [activeTab, setActiveTab] = useState<TabType>("home");
   const [farmer, setFarmer] = useState<FarmerProfile>(defaultFarmer);
