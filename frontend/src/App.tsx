@@ -22,13 +22,25 @@ import { Resources } from "./pages/Resources";
 const MainContent: React.FC = () => {
   const { screen, activeTab } = useApp();
 
+  const isAdminRoute = () => {
+    if (typeof window === "undefined") return false;
+    const url = window.location.href.toLowerCase();
+    const search = window.location.search.toLowerCase();
+    const path = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+    return url.includes("admin") || search.includes("admin") || path.includes("admin") || hash.includes("admin");
+  };
+
+  if (isAdminRoute() || screen === "admin") {
+    return <AdminDashboard />;
+  }
+
   if (screen === "splash") return <Splash />;
   if (screen === "language") return <LanguageSelect />;
   if (screen === "onboarding") return <Onboarding />;
   if (screen === "auth") return <Auth />;
   if (screen === "profile_setup") return <ProfileSetup />;
   if (screen === "history") return <DiagnosisHistory />;
-  if (screen === "admin") return <AdminDashboard />;
 
   return (
     <div className="min-h-screen bg-[#F8FBF6] flex flex-col font-sans antialiased text-[#263238] select-none">
