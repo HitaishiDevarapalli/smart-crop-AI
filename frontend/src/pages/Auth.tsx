@@ -65,6 +65,14 @@ export const Auth: React.FC = () => {
       activeBg: "bg-[#23451B] text-white border-[#23451B]"
     },
     {
+      id: "admin",
+      title: "Admin Panel 👑",
+      sub: "అడ్మిన్ / एडमिन",
+      icon: ShieldCheck,
+      badge: "Master Control Center",
+      activeBg: "bg-amber-600 text-white border-amber-600 font-extrabold"
+    },
+    {
       id: "buyer",
       title: "Crop Buyer",
       sub: "కొనుగోలుదారు / खरीददार",
@@ -87,14 +95,6 @@ export const Auth: React.FC = () => {
       icon: Truck,
       badge: "Agri Logistics",
       activeBg: "bg-emerald-700 text-white border-emerald-700"
-    },
-    {
-      id: "admin",
-      title: "Admin",
-      sub: "అడ్మిన్ / एडमिन",
-      icon: ShieldCheck,
-      badge: "Master Control",
-      activeBg: "bg-amber-600 text-white border-amber-600"
     }
   ];
 
