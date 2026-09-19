@@ -45,7 +45,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [language, setLanguageState] = useState<Language>(() => {
     return (localStorage.getItem("sanjeevani_lang") as Language) || "en";
   });
-  const [screen, setScreen] = useState<ScreenType>("landing");
+  const [screen, setScreen] = useState<ScreenType>(() => {
+    return window.location.search.includes("screen=admin") ? "admin" : "landing";
+  });
   const [activeTab, setActiveTab] = useState<TabType>("home");
   const [farmer, setFarmer] = useState<FarmerProfile>(defaultFarmer);
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);

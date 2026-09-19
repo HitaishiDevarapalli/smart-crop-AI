@@ -92,8 +92,8 @@ export const Header: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-40 w-full shadow-md select-none font-sans">
-      {/* 1. TOP OLIVE GREEN BAR */}
-      <div className="bg-[#4D7133] text-white py-2.5 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+      {/* 1. TOP PASTEL GREEN BAR */}
+      <div className="bg-gradient-to-r from-[#5B8C46] via-[#669850] to-[#4F7D3C] text-white py-2.5 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 shadow-sm">
         {/* Left: Brand Logo & Title */}
         <div 
           className="flex items-center space-x-3 cursor-pointer shrink-0"
@@ -128,7 +128,7 @@ export const Header: React.FC = () => {
             />
             <button 
               type="submit"
-              className="absolute right-1 w-7 h-7 bg-[#2E1A11] text-white rounded-full flex items-center justify-center hover:bg-black transition cursor-pointer"
+              className="absolute right-1 w-7 h-7 bg-[#2E4A23] text-white rounded-full flex items-center justify-center hover:bg-[#1E3316] transition cursor-pointer"
             >
               <Search className="w-3.5 h-3.5" />
             </button>
@@ -155,7 +155,7 @@ export const Header: React.FC = () => {
                   className="w-full text-left px-3 py-2 rounded-xl hover:bg-emerald-50 flex items-center space-x-2.5 transition group cursor-pointer"
                 >
                   <span className="text-base shrink-0">{item.icon}</span>
-                  <span className="font-bold text-gray-800 group-hover:text-[#4D7133] truncate">
+                  <span className="font-bold text-gray-800 group-hover:text-[#5B8C46] truncate">
                     {item.title}
                   </span>
                 </button>
@@ -167,8 +167,8 @@ export const Header: React.FC = () => {
         {/* Right Status & Controls */}
         <div className="flex items-center space-x-3 shrink-0 text-xs">
           {/* Online Pill */}
-          <div className="hidden md:flex items-center space-x-1.5 bg-[#3B5B25] text-emerald-200 px-2.5 py-1 rounded-full text-[11px] font-bold border border-emerald-400/30">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <div className="hidden md:flex items-center space-x-1.5 bg-[#487537] text-emerald-100 px-2.5 py-1 rounded-full text-[11px] font-bold border border-emerald-300/30">
+            <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
             <span>• Online</span>
           </div>
 
@@ -193,11 +193,11 @@ export const Header: React.FC = () => {
                       setShowLangMenu(false);
                     }}
                     className={`w-full text-left px-4 py-2 transition flex items-center justify-between ${
-                      language === lang ? "font-bold text-[#4D7133] bg-emerald-50" : "hover:bg-gray-50 text-gray-700"
+                      language === lang ? "font-bold text-[#5B8C46] bg-emerald-50" : "hover:bg-gray-50 text-gray-700"
                     }`}
                   >
                     <span>{langLabels[lang]}</span>
-                    {language === lang && <Check className="w-3.5 h-3.5 text-[#4D7133]" />}
+                    {language === lang && <Check className="w-3.5 h-3.5 text-[#5B8C46]" />}
                   </button>
                 ))}
               </div>
@@ -210,17 +210,17 @@ export const Header: React.FC = () => {
               setActiveTab("profile");
               setScreen("main");
             }}
-            className="flex items-center space-x-1.5 bg-[#3B5B25] hover:bg-[#304B1D] text-white px-3 py-1 rounded-full text-xs font-bold border border-emerald-400/30 transition"
+            className="flex items-center space-x-1.5 bg-[#487537] hover:bg-[#3C632C] text-white px-3 py-1 rounded-full text-xs font-bold border border-emerald-300/30 transition"
           >
-            <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span className="w-2 h-2 rounded-full bg-amber-300"></span>
             <span className="truncate max-w-[100px]">{farmer.full_name.split(' ')[0]}</span>
-            <span className="bg-emerald-800 text-[9px] px-1.5 py-0.5 rounded text-emerald-200 uppercase font-bold">Farmer</span>
+            <span className="bg-[#335328] text-[9px] px-1.5 py-0.5 rounded text-emerald-200 uppercase font-bold">Farmer</span>
           </button>
         </div>
       </div>
 
-      {/* 2. SECONDARY DEEP BROWN NAV BAR */}
-      <div className="bg-[#2D1B13] text-gray-200 py-1.5 border-b border-[#20130D]">
+      {/* 2. SECONDARY PASTEL FOREST NAV BAR */}
+      <div className="bg-[#335328] text-gray-100 py-1.5 border-b border-[#29441F]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center space-x-6 text-xs sm:text-sm font-extrabold overflow-x-auto no-scrollbar">
           {navItems.map((item) => {
             const isActive = (item.id === "home" && screen === "landing") || (item.id === "crop" && activeTab === "crop" && screen === "main") || (item.id === "market_prices" && activeTab === "market" && screen === "main");
@@ -230,8 +230,8 @@ export const Header: React.FC = () => {
                 onClick={item.action}
                 className={`py-1 px-3 rounded-md transition whitespace-nowrap ${
                   isActive
-                    ? "bg-white/20 text-white font-black border-b-2 border-amber-400"
-                    : "hover:text-amber-300 text-gray-300"
+                    ? "bg-white/20 text-white font-black border-b-2 border-amber-300"
+                    : "hover:text-amber-200 text-stone-200"
                 }`}
               >
                 {item.label}

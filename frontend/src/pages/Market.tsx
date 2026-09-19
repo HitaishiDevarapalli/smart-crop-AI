@@ -4,6 +4,12 @@ import { fetchMarketPrices, fetchBuyers, fetchFPOs, fetchColdStorage } from "../
 import { MarketPrice, Buyer, FPO, ColdStorageFacility } from "../types";
 import { triggerPhoneCall } from "../utils/phone";
 import { 
+  checkCommunicationAllowed, 
+  isCategoryAccessible, 
+  sanitizeFarmerPayload, 
+  ActorRole 
+} from "../utils/privacyEngine";
+import { 
   TrendingUp, 
   Users, 
   Building, 
@@ -23,7 +29,9 @@ import {
   Tag,
   MessageSquare,
   ShoppingBag,
-  Plus
+  Plus,
+  Edit3,
+  Trash2
 } from "lucide-react";
 
 export const Market: React.FC = () => {
@@ -367,10 +375,24 @@ export const Market: React.FC = () => {
           className="px-3.5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-extrabold flex items-center space-x-1.5 shrink-0 shadow-sm cursor-pointer"
           title="Add entry to this category"
         >
-          <Plus className="w-4 h-4 text-amber-300 stroke-[3]" />
-          <span className="hidden sm:inline">+ Add</span>
         </button>
       </div>
+
+      {/* PRIVACY ENFORCEMENT FIREWALL BANNER */}
+      {((farmer.user_role === "buyer" && subTab === "storage") ||
+        (farmer.user_role === "storage" && subTab === "buyers")) && (
+        <div className="p-5 bg-red-50 border-2 border-red-300 rounded-3xl text-red-950 space-y-2 shadow-md">
+          <div className="flex items-center space-x-2.5 font-extrabold text-sm text-red-900">
+            <ShieldCheck className="w-6 h-6 text-red-700 shrink-0" />
+            <span>🔒 SYSTEM PRIVACY FIREWALL BLOCK ACTIVE</span>
+          </div>
+          <p className="text-xs text-red-800 font-medium">
+            {farmer.user_role === "buyer"
+              ? "Buyers are strictly isolated from Cold Storage Facilities. Communication & access channels between Buyers and Cold Storage are dropped per System Security Matrix."
+              : "Cold Storage Providers are strictly isolated from Buyer Procurement lists. Communication & access channels between Cold Storage and Buyers are dropped per System Security Matrix."}
+          </p>
+        </div>
+      )}
 
       {/* SubTab 1: Mandi Prices */}
       {subTab === "prices" && (
@@ -390,7 +412,7 @@ export const Market: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {prices.map((item) => (
-              <div key={item.id} className="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs hover:shadow-md transition space-y-3">
+              <div key={item.id} className="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs hover:shadow-md transition space-y-3 relative group">
                 <div className="flex items-start justify-between">
                   <div>
                     <h4 className="text-lg font-extrabold text-gray-900">{getLocalizedCrop(item)}</h4>
@@ -401,6 +423,22 @@ export const Market: React.FC = () => {
                   </div>
 
                   <div className="text-right">
+                    <div className="flex items-center justify-end space-x-1 mb-1">
+                      <button
+                        onClick={() => openAddForCategory("prices")}
+                        className="p-1 rounded-lg bg-gray-100 hover:bg-emerald-100 text-gray-600 hover:text-emerald-800 transition"
+                        title="Edit Details"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => setPrices(prices.filter(p => p.id !== item.id))}
+                        className="p-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition"
+                        title="Delete Record"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                     <span className="text-xl font-extrabold text-emerald-800 block">₹{item.price.toLocaleString()}</span>
                     <span className="text-[10px] text-gray-500 font-medium">per {item.unit}</span>
                   </div>
@@ -442,15 +480,34 @@ export const Market: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {buyers.map((buyer) => (
-              <div key={buyer.id} className="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs hover:shadow-md transition space-y-4 flex flex-col justify-between">
+              <div key={buyer.id} className="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs hover:shadow-md transition space-y-4 flex flex-col justify-between relative group">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[10px] font-extrabold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md uppercase tracking-wider border border-emerald-200">
                       {buyer.buyer_type}
                     </span>
-                    <span className="text-lg font-extrabold text-emerald-800">
-                      ₹{buyer.price_offered.toLocaleString()}/qtl
-                    </span>
+
+                    <div className="flex items-center space-x-2">
+                      <span className="text-base font-extrabold text-emerald-800">
+                        ₹{buyer.price_offered.toLocaleString()}/qtl
+                      </span>
+                      <div className="flex space-x-1">
+                        <button
+                          onClick={() => openAddForCategory("buyers")}
+                          className="p-1.5 rounded-lg bg-gray-100 hover:bg-emerald-100 text-gray-600 hover:text-emerald-800 transition"
+                          title="Edit Buyer Details"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => setBuyers(buyers.filter(b => b.id !== buyer.id))}
+                          className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition"
+                          title="Delete Buyer Entry"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
                   <h4 className="text-base font-extrabold text-gray-900 mb-1">{buyer.name}</h4>
