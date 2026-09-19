@@ -50,11 +50,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [screen, setScreen] = useState<ScreenType>(() => {
     const search = window.location.search.toLowerCase();
     const hash = window.location.hash.toLowerCase();
-    if (search.includes("admin") || search.includes("screen=admin") || hash.includes("admin")) {
+    const path = window.location.pathname.toLowerCase();
+    if (search.includes("admin") || hash.includes("admin") || path.includes("admin")) {
       return "admin";
     }
     return "landing";
   });
+
+  useEffect(() => {
+    const checkRoute = () => {
+      const url = window.location.href.toLowerCase();
+      if (url.includes("admin") || url.includes("screen=admin")) {
+        setScreen("admin");
+      }
+    };
+    checkRoute();
+    window.addEventListener("popstate", checkRoute);
+    window.addEventListener("hashchange", checkRoute);
+    return () => {
+      window.removeEventListener("popstate", checkRoute);
+      window.removeEventListener("hashchange", checkRoute);
+    };
+  }, []);
   const [activeTab, setActiveTab] = useState<TabType>("home");
   const [farmer, setFarmer] = useState<FarmerProfile>(defaultFarmer);
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
