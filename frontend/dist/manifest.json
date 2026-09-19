@@ -1,0 +1,16 @@
+{
+  "name": "Sanjeevani",
+  "short_name": "Sanjeevani",
+  "description": "From Crop Care to Market — Your Farming Companion",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F9FA",
+  "theme_color": "#1E5128",
+  "icons": [
+    {
+      "src": "/sprout.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
