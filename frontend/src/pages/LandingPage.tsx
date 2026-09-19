@@ -396,7 +396,13 @@ export const LandingPage: React.FC = () => {
                 Watch how SANJEEVANI connects farmers directly to crop buyers, cold storage, transport providers, and AI disease diagnostics.
               </p>
             </div>
-            <div className="shrink-0">
+            <div className="shrink-0 flex items-center space-x-2">
+              <button 
+                onClick={() => setScreen("splash")}
+                className="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-gray-900 font-extrabold text-xs rounded-xl shadow-md transition active:scale-95 flex items-center space-x-2 cursor-pointer"
+              >
+                <span>🎬 Re-Watch Intro Video</span>
+              </button>
               <button 
                 onClick={() => { setScreen("main"); setActiveTab("crop"); }}
                 className="px-5 py-2.5 bg-[#1B4D3E] hover:bg-[#12382c] text-white font-extrabold text-xs rounded-xl shadow-md transition active:scale-95 flex items-center space-x-2"
@@ -406,33 +412,19 @@ export const LandingPage: React.FC = () => {
               </button>
             </div>
           </div>
-
-          {/* HTML5 Video Player Container */}
-          <div className="relative rounded-2xl overflow-hidden bg-black aspect-video shadow-2xl border-4 border-emerald-700/30">
-            <video
-              controls
-              preload="metadata"
-              className="w-full h-full object-contain"
-              poster="https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?auto=format&fit=crop&w=1200&q=80"
-            >
-              <source src="/WhatsApp%20Video%202026-09-19%20at%204.04.59%20PM.mov" type="video/mp4" />
-              <source src="/WhatsApp Video 2026-09-19 at 4.04.59 PM.mov" type="video/quicktime" />
-              Your browser does not support HTML5 video playback.
-            </video>
-          </div>
         </div>
       </section>
 
       {/* CONTINUOUS LEFT-TO-RIGHT SCROLLING FARMER & BUYER REVIEWS MARQUEE */}
-      <section className="py-10 bg-emerald-950 text-white overflow-hidden my-6 border-y-4 border-amber-400">
+      <section className="py-12 bg-gradient-to-r from-[#EBF5EA] via-[#E4F0E3] to-[#EBF5EA] text-gray-900 overflow-hidden my-6 border-y-4 border-[#5B8C46]/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 text-center">
-          <span className="text-[10px] font-extrabold text-amber-300 bg-emerald-900/80 px-3 py-1 rounded-full uppercase tracking-widest border border-emerald-700">
+          <span className="text-[10px] font-extrabold text-[#2D5021] bg-[#5B8C46]/20 px-3 py-1 rounded-full uppercase tracking-widest border border-[#5B8C46]/40">
             Verified Testimonials & Feedback
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white mt-2">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1E3A15] mt-2">
             🌟 Real Reviews from Farmers & Buyers Across India
           </h2>
-          <p className="text-xs text-emerald-200 font-medium max-w-xl mx-auto mt-1">
+          <p className="text-xs text-[#3E652E] font-medium max-w-xl mx-auto mt-1">
             See what verified agricultural producers, direct grain buyers, cold storage operators and logistics drivers say about SANJEEVANI.
           </p>
         </div>
@@ -545,33 +537,33 @@ export const LandingPage: React.FC = () => {
             ].map((rev, idx) => (
               <div
                 key={idx}
-                className="w-80 sm:w-96 bg-[#133329] border border-emerald-700/60 rounded-3xl p-5 shadow-xl shrink-0 flex flex-col justify-between hover:border-amber-400 transition duration-300"
+                className="w-80 sm:w-96 bg-white border-2 border-[#5B8C46]/25 rounded-3xl p-5 shadow-lg shrink-0 flex flex-col justify-between hover:border-[#5B8C46] transition duration-300"
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-[10px] font-extrabold bg-emerald-900 text-amber-300 px-2.5 py-0.5 rounded-full border border-emerald-600">
+                    <span className="text-[10px] font-extrabold bg-[#EBF5EA] text-[#2D5021] px-2.5 py-0.5 rounded-full border border-[#5B8C46]/40">
                       {rev.tag}
                     </span>
-                    <div className="flex text-amber-400 text-xs">
+                    <div className="flex text-amber-500 text-xs font-bold">
                       {"★".repeat(rev.rating)}
                     </div>
                   </div>
 
-                  <p className="text-xs text-emerald-100 font-medium leading-relaxed italic mb-4">
+                  <p className="text-xs text-gray-700 font-medium leading-relaxed italic mb-4">
                     "{rev.review}"
                   </p>
                 </div>
 
-                <div className="flex items-center space-x-3 pt-3 border-t border-emerald-800/80">
+                <div className="flex items-center space-x-3 pt-3 border-t border-[#5B8C46]/20">
                   <img
                     src={rev.image}
                     alt={rev.name}
-                    className="w-10 h-10 rounded-full object-cover border-2 border-amber-400 shrink-0"
+                    className="w-10 h-10 rounded-full object-cover border-2 border-[#5B8C46]/40 shrink-0"
                   />
                   <div>
-                    <h4 className="text-xs font-extrabold text-white leading-tight">{rev.name}</h4>
-                    <span className="text-[10px] text-emerald-300 font-semibold block">{rev.role}</span>
-                    <span className="text-[9px] text-emerald-400/80 block">{rev.location}</span>
+                    <h4 className="text-xs font-extrabold text-[#1E3A15] leading-tight">{rev.name}</h4>
+                    <span className="text-[10px] text-[#3E652E] font-semibold block">{rev.role}</span>
+                    <span className="text-[9px] text-[#5B8C46] block font-medium">{rev.location}</span>
                   </div>
                 </div>
               </div>
