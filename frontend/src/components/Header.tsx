@@ -86,6 +86,7 @@ export const Header: React.FC = () => {
     { id: "buyers_fpos", label: "Buyers & FPOs", action: () => { setScreen("main"); setActiveTab("market"); } },
     { id: "storage_logistics", label: "Storage & Logistics", action: () => { setScreen("main"); setActiveTab("market"); } },
     { id: "resources", label: "Resources", action: () => setScreen("resources") },
+    { id: "admin", label: "🛡️ Admin Master", action: () => setScreen("admin") },
     { id: "contact", label: "Contact us", action: () => { setScreen("main"); setActiveTab("work"); } }
   ];
 
