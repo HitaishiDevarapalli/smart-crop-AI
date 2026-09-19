@@ -132,7 +132,12 @@ export interface AgreementRecord {
 }
 
 export const AdminDashboard: React.FC = () => {
-  const { setScreen, setActiveTab } = useApp();
+  const { setScreen, setActiveTab, isAdminAuthenticated, setIsAdminAuthenticated } = useApp();
+
+  // Admin Credential Challenge State
+  const [adminEmail, setAdminEmail] = useState("admin@sanjeevani.com");
+  const [adminPasscode, setAdminPasscode] = useState("SANJEEVANI_ADMIN_2026");
+  const [adminAuthError, setAdminAuthError] = useState("");
 
   // Active Admin Subtab
   const [activeTabModule, setActiveTabModule] = useState<
@@ -459,6 +464,17 @@ export const AdminDashboard: React.FC = () => {
     logAuditAction("Farmer", "Deleted Farmer Profile Record", farmerId, `Name: ${f.name}`, "Record Removed");
   };
 
+  const handleEditFarmer = (f: FarmerRecord) => {
+    setEditingItem(f);
+    setModalType("farmer");
+    setFormName(f.name);
+    setFormPhone(f.phone);
+    setFormDistrict(f.district);
+    setFormCrop(f.mainCrop);
+    setFormSize(f.farmSizeAcres.toString());
+    setShowAddModal(true);
+  };
+
   // Buyer Actions
   const handleApproveBuyerKyc = (buyerId: string) => {
     setBuyers((prev) =>
@@ -497,6 +513,24 @@ export const AdminDashboard: React.FC = () => {
     );
   };
 
+  const handleDeleteBuyer = (buyerId: string) => {
+    const b = buyers.find((item) => item.id === buyerId);
+    if (!b) return;
+    setBuyers((prev) => prev.filter((item) => item.id !== buyerId));
+    logAuditAction("Buyer", "Deleted Buyer Account Record", buyerId, `Company: ${b.companyName}`, "Record Removed");
+  };
+
+  const handleEditBuyer = (b: BuyerRecord) => {
+    setEditingItem(b);
+    setModalType("buyer");
+    setFormName(b.companyName);
+    setFormPhone(b.phone);
+    setFormDistrict(b.district);
+    setFormCrop(b.interestedCrops[0] || "Tomato");
+    setFormPrice(b.priceOfferedQtl.toString());
+    setShowAddModal(true);
+  };
+
   // Storage Actions
   const handleToggleStorageStatus = (storageId: string) => {
     setStorages((prev) =>
@@ -509,6 +543,31 @@ export const AdminDashboard: React.FC = () => {
         return s;
       })
     );
+  };
+
+  const handleDeleteStorage = (storageId: string) => {
+    const s = storages.find((item) => item.id === storageId);
+    if (!s) return;
+    setStorages((prev) => prev.filter((item) => item.id !== storageId));
+    logAuditAction("Cold Storage", "Deleted Cold Storage Facility", storageId, `Facility: ${s.facilityName}`, "Record Removed");
+  };
+
+  const handleEditStorage = (s: ColdStorageRecord) => {
+    setEditingItem(s);
+    setModalType("storage");
+    setFormName(s.facilityName);
+    setFormPhone(s.phone);
+    setFormDistrict(s.district);
+    setFormCapacity(s.totalCapacityMT.toString());
+    setShowAddModal(true);
+  };
+
+  // Agreement Actions
+  const handleDeleteAgreement = (agrId: string) => {
+    const a = agreements.find((item) => item.id === agrId);
+    if (!a) return;
+    setAgreements((prev) => prev.filter((item) => item.id !== agrId));
+    logAuditAction("Agreement", "Terminated / Deleted Procurement Contract", agrId, `Crop: ${a.cropName}`, "Contract Terminated");
   };
 
   // Modal Submit
@@ -599,6 +658,93 @@ export const AdminDashboard: React.FC = () => {
   const occupiedStorageCapacityMT = storages.reduce((sum, s) => sum + s.occupiedCapacityMT, 0);
   const availableStorageCapacityMT = totalStorageCapacityMT - occupiedStorageCapacityMT;
 
+  // Check if Admin is authenticated. If NOT, render strict Admin Credential Challenge Gate
+  if (!isAdminAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#F4F1EA] py-12 px-4 flex items-center justify-center font-sans select-none">
+        <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-stone-200 p-8 space-y-6">
+          <div className="text-center space-y-2">
+            <div className="w-16 h-16 bg-[#1E3B18] text-white rounded-2xl flex items-center justify-center shadow-md mx-auto mb-3">
+              <Lock className="w-8 h-8 text-amber-300" />
+            </div>
+            <span className="text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full uppercase tracking-wider">
+              Admin Master Gate
+            </span>
+            <h2 className="text-2xl font-serif font-extrabold text-[#1E3B18]">
+              SANJEEVANI Admin Access
+            </h2>
+            <p className="text-xs text-stone-500 font-medium">
+              Strict Admin Authentication Required. Farmers, Buyers, and Cold Storage Operators are restricted from accessing this portal.
+            </p>
+          </div>
+
+          {adminAuthError && (
+            <div className="p-3.5 bg-red-50 border border-red-200 rounded-2xl text-red-700 text-xs font-bold text-center">
+              {adminAuthError}
+            </div>
+          )}
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (
+                (adminEmail.toLowerCase() === "admin@sanjeevani.com" || adminEmail.toLowerCase() === "admin") &&
+                (adminPasscode === "SANJEEVANI_ADMIN_2026" || adminPasscode === "admin123")
+              ) {
+                setAdminAuthError("");
+                setIsAdminAuthenticated(true);
+              } else {
+                setAdminAuthError("⛔ 403 ACCESS DENIED: Invalid Admin Credentials or Security Passcode.");
+              }
+            }}
+            className="space-y-4 text-xs font-semibold"
+          >
+            <div>
+              <label className="block text-stone-700 font-bold mb-1">Admin Email / Username</label>
+              <input
+                type="text"
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                placeholder="admin@sanjeevani.com"
+                className="w-full p-3 bg-[#FAF9F6] border border-stone-300 rounded-2xl text-sm font-bold text-stone-900 outline-none focus:border-[#1E3B18]"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-stone-700 font-bold mb-1">Admin Security Passcode</label>
+              <input
+                type="password"
+                value={adminPasscode}
+                onChange={(e) => setAdminPasscode(e.target.value)}
+                placeholder="••••••••••••"
+                className="w-full p-3 bg-[#FAF9F6] border border-stone-300 rounded-2xl text-sm font-bold text-stone-900 outline-none focus:border-[#1E3B18]"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3.5 bg-[#1E3B18] hover:bg-[#142910] text-amber-300 font-extrabold text-sm rounded-2xl shadow-xl flex items-center justify-center space-x-2 transition cursor-pointer active:scale-96"
+            >
+              <ShieldCheck className="w-5 h-5 text-amber-300" />
+              <span>Authenticate & Enter Control Panel</span>
+            </button>
+          </form>
+
+          <div className="pt-2 text-center border-t border-stone-100">
+            <button
+              onClick={() => setScreen("landing")}
+              className="text-xs text-stone-500 font-bold hover:text-stone-800"
+            >
+              ← Return to Sanjeevani Home
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#F4F6F2] py-6 px-4 sm:px-6 lg:px-8 font-sans select-none space-y-6">
       
@@ -619,24 +765,61 @@ export const AdminDashboard: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center space-x-3 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <div className="flex items-center space-x-1 bg-emerald-950/80 p-1.5 rounded-2xl border border-emerald-700/50">
+            <span className="text-[10px] text-amber-300 font-black px-2 uppercase tracking-wider hidden sm:inline">Admin Mode:</span>
+            <button
+              onClick={() => {
+                setScreen("main");
+                setActiveTab("home");
+              }}
+              className="px-3 py-1.5 bg-emerald-800 hover:bg-emerald-700 text-white font-extrabold text-[11px] rounded-xl transition cursor-pointer flex items-center space-x-1"
+              title="Inspect Farmer Module as Admin"
+            >
+              <span>🌾 Farmer App</span>
+            </button>
+            <button
+              onClick={() => {
+                setScreen("main");
+                setActiveTab("market");
+              }}
+              className="px-3 py-1.5 bg-amber-700 hover:bg-amber-600 text-white font-extrabold text-[11px] rounded-xl transition cursor-pointer flex items-center space-x-1"
+              title="Inspect Buyer Module as Admin"
+            >
+              <span>🏬 Buyer Market</span>
+            </button>
+            <button
+              onClick={() => {
+                setScreen("main");
+                setActiveTab("market");
+              }}
+              className="px-3 py-1.5 bg-teal-800 hover:bg-teal-700 text-white font-extrabold text-[11px] rounded-xl transition cursor-pointer flex items-center space-x-1"
+              title="Inspect Cold Storage Module as Admin"
+            >
+              <span>❄️ Storage Care</span>
+            </button>
+          </div>
+
           <button
             onClick={() => {
               setModalType("farmer");
               setFormName("");
               setShowAddModal(true);
             }}
-            className="px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-gray-900 font-extrabold text-xs rounded-xl shadow-md transition active:scale-95 flex items-center space-x-1.5 cursor-pointer"
+            className="px-3.5 py-2 bg-amber-400 hover:bg-amber-300 text-gray-900 font-extrabold text-xs rounded-xl shadow-md transition active:scale-95 flex items-center space-x-1 cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
             <span>+ Add Record</span>
           </button>
 
           <button
-            onClick={() => setScreen("landing")}
-            className="px-4 py-2.5 bg-emerald-900/80 hover:bg-emerald-950 text-emerald-200 border border-emerald-600 font-extrabold text-xs rounded-xl transition cursor-pointer"
+            onClick={() => {
+              setIsAdminAuthenticated(false);
+              setScreen("landing");
+            }}
+            className="px-3.5 py-2 bg-red-800 hover:bg-red-900 text-white font-extrabold text-xs rounded-xl shadow transition cursor-pointer"
           >
-            Exit Control Panel
+            🔒 Logout Admin
           </button>
         </div>
       </div>
@@ -886,6 +1069,14 @@ export const AdminDashboard: React.FC = () => {
                       )}
 
                       <button
+                        onClick={() => handleEditFarmer(f)}
+                        className="px-2.5 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 text-[10px] font-bold rounded-lg cursor-pointer"
+                        title="Edit Farmer Details"
+                      >
+                        ✏️ Edit
+                      </button>
+
+                      <button
                         onClick={() => handleToggleFarmerStatus(f.id)}
                         className={`px-2.5 py-1 text-[10px] font-extrabold rounded-lg shadow-xs cursor-pointer ${
                           f.accountStatus === "Active" ? "bg-amber-500 hover:bg-amber-600 text-white" : "bg-emerald-700 hover:bg-emerald-800 text-white"
@@ -899,7 +1090,7 @@ export const AdminDashboard: React.FC = () => {
                         className="px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 text-[10px] font-bold rounded-lg cursor-pointer"
                         title="Delete Farmer Record"
                       >
-                        Delete
+                        🗑️ Delete
                       </button>
                     </td>
                   </tr>
@@ -1004,10 +1195,26 @@ export const AdminDashboard: React.FC = () => {
                       )}
 
                       <button
+                        onClick={() => handleEditBuyer(b)}
+                        className="px-2.5 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 text-[10px] font-bold rounded-lg cursor-pointer"
+                        title="Edit Buyer Details"
+                      >
+                        ✏️ Edit
+                      </button>
+
+                      <button
                         onClick={() => handleToggleBuyerStatus(b.id)}
                         className="px-2.5 py-1 bg-gray-200 hover:bg-gray-300 text-gray-800 text-[10px] font-bold rounded-lg cursor-pointer"
                       >
                         {b.accountStatus === "Active" ? "Suspend" : "Activate"}
+                      </button>
+
+                      <button
+                        onClick={() => handleDeleteBuyer(b.id)}
+                        className="px-2.5 py-1 bg-red-100 hover:bg-red-200 text-red-700 text-[10px] font-bold rounded-lg cursor-pointer"
+                        title="Delete Buyer Record"
+                      >
+                        🗑️ Delete
                       </button>
                     </td>
                   </tr>
@@ -1122,10 +1329,22 @@ export const AdminDashboard: React.FC = () => {
 
                 <div className="pt-2 flex justify-end space-x-2">
                   <button
+                    onClick={() => handleEditStorage(s)}
+                    className="px-3 py-1.5 bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs font-bold rounded-xl cursor-pointer"
+                  >
+                    ✏️ Edit Facility
+                  </button>
+                  <button
                     onClick={() => handleToggleStorageStatus(s.id)}
-                    className="px-3 py-1.5 bg-stone-200 hover:bg-stone-300 text-gray-800 text-xs font-bold rounded-xl"
+                    className="px-3 py-1.5 bg-stone-200 hover:bg-stone-300 text-gray-800 text-xs font-bold rounded-xl cursor-pointer"
                   >
                     {s.accountStatus === "Active" ? "Suspend Facility" : "Activate Facility"}
+                  </button>
+                  <button
+                    onClick={() => handleDeleteStorage(s.id)}
+                    className="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-bold rounded-xl cursor-pointer"
+                  >
+                    🗑️ Delete Facility
                   </button>
                 </div>
               </div>
@@ -1229,6 +1448,15 @@ export const AdminDashboard: React.FC = () => {
                     <span className="font-extrabold text-teal-900 text-sm">{a.storageName}</span>
                     <span className="text-[10px] text-gray-500 block">Facility ID: {a.storageId}</span>
                   </div>
+                </div>
+
+                <div className="flex justify-end pt-1">
+                  <button
+                    onClick={() => handleDeleteAgreement(a.id)}
+                    className="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-bold rounded-xl cursor-pointer"
+                  >
+                    🗑️ Terminate / Delete Contract
+                  </button>
                 </div>
               </div>
             ))}

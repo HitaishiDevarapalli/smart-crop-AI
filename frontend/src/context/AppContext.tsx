@@ -25,6 +25,8 @@ interface AppContextType {
   isSyncing: boolean;
   selectedDiagnosis: any;
   setSelectedDiagnosis: (diag: any) => void;
+  isAdminAuthenticated: boolean;
+  setIsAdminAuthenticated: (auth: boolean) => void;
 }
 
 const defaultFarmer: FarmerProfile = {
@@ -54,6 +56,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isAiModalOpen, setIsAiModalOpen] = useState<boolean>(false);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [selectedDiagnosis, setSelectedDiagnosis] = useState<any>(null);
+  const [isAdminAuthenticated, setIsAdminAuthenticatedState] = useState<boolean>(() => {
+    return sessionStorage.getItem("sanjeevani_admin_auth") === "true";
+  });
+
+  const setIsAdminAuthenticated = (auth: boolean) => {
+    setIsAdminAuthenticatedState(auth);
+    if (auth) {
+      sessionStorage.setItem("sanjeevani_admin_auth", "true");
+    } else {
+      sessionStorage.removeItem("sanjeevani_admin_auth");
+    }
+  };
 
   const [notifications] = useState<NotificationItem[]>([
     {
@@ -151,7 +165,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         triggerSync,
         isSyncing,
         selectedDiagnosis,
-        setSelectedDiagnosis
+        setSelectedDiagnosis,
+        isAdminAuthenticated,
+        setIsAdminAuthenticated
       }}
     >
       {children}
