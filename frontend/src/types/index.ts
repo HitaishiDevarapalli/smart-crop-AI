@@ -10,6 +10,18 @@ export interface FarmerProfile {
   farm_size_acres: number;
   language: Language;
   profile_photo_url?: string | null;
+  user_role?: "farmer" | "buyer" | "storage" | "transport" | "coordinator";
+  // Buyer Profile Fields
+  company_name?: string;
+  buyer_type?: string;
+  crop_required?: string;
+  min_quantity_tons?: number;
+  price_offered?: number;
+  // Storage Facility Profile Fields
+  facility_name?: string;
+  capacity_mt?: number;
+  available_space_mt?: number;
+  rate_per_day_quintal?: number;
 }
 
 export interface WeatherData {

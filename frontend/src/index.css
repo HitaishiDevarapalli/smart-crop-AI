@@ -10,11 +10,40 @@
   }
 }
 
+/* Hide number input spinners globally - manual typing everywhere */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Touch & Click Feedback Animations */
+button, a, .touch-card {
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:active, a:active, .touch-card:active {
+  transform: scale(0.96) !important;
+}
+
 /* Hide scrollbar for clean horizontal tab sliders */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+/* Infinite Horizontal Marquee for Reviews */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
 }
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
 }
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+

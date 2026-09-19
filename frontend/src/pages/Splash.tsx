@@ -40,16 +40,16 @@ export const Splash: React.FC = () => {
         transition={{ duration: 0.8, delay: 0.3 }}
         className="flex flex-col items-center text-center z-10"
       >
-        <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-[#4E9F3D] to-[#1E5128] flex items-center justify-center shadow-2xl border-2 border-amber-400/50 mb-6">
-          <Sprout className="w-14 h-14 text-amber-300" />
+        <div className="w-28 h-28 rounded-3xl bg-white p-2 flex items-center justify-center shadow-2xl border-2 border-amber-400/50 mb-6 overflow-hidden">
+          <img src="/logo.png" alt="Sanjeevani Logo" className="w-full h-full object-contain" />
         </div>
 
         <h1 className="text-4xl font-extrabold tracking-wide text-white mb-2 font-sans">
-          ??????? <span className="text-amber-300 text-2xl">Sanjeevani</span>
+          సంజీవని <span className="text-amber-300 text-2xl">Sanjeevani</span>
         </h1>
         
         <p className="text-sm font-medium text-emerald-200 tracking-wide max-w-xs">
-          "From Crop Care to Market � Your Farming Companion."
+          "From Crop Care to Market � Your Farming Companion."
         </p>
 
         <div className="mt-8 flex items-center space-x-2 bg-emerald-900/60 border border-emerald-600/40 px-4 py-1.5 rounded-full text-xs text-amber-300">

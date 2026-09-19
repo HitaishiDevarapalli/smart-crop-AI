@@ -21,9 +21,9 @@ export const Profile: React.FC = () => {
           <h2 className="text-xl font-extrabold text-white">{farmer.full_name}</h2>
           <p className="text-emerald-200 font-semibold mt-0.5">{farmer.phone_number}</p>
           <div className="mt-1 flex items-center space-x-2 text-[11px] text-amber-300">
-            <span>?? {farmer.village}, {farmer.district}</span>
-            <span>�</span>
-            <span>?? {farmer.main_crop} ({farmer.farm_size_acres} Acres)</span>
+            <span>ధర {farmer.village}, {farmer.district}</span>
+            <span>�</span>
+            <span>ధర {farmer.main_crop} ({farmer.farm_size_acres} Acres)</span>
           </div>
         </div>
       </div>
@@ -47,7 +47,7 @@ export const Profile: React.FC = () => {
         >
           <div className="flex items-center space-x-3 text-gray-800">
             <Globe className="w-5 h-5 text-amber-600" />
-            <span className="font-bold">Change Language / ??? ????????</span>
+            <span className="font-bold">Change Language / పంట సంజీవని?</span>
           </div>
           <span className="text-gray-400 font-bold">?</span>
         </button>
@@ -68,7 +68,7 @@ export const Profile: React.FC = () => {
       <div className="bg-white p-4 rounded-3xl border border-emerald-100 shadow-sm space-y-3">
         <h4 className="font-extrabold text-gray-900 uppercase tracking-wider text-[11px] flex items-center space-x-1.5">
           <HelpCircle className="w-4 h-4 text-emerald-700" />
-          <span>Help & Assistance (?????)</span>
+          <span>Help & Assistance (సలహా)</span>
         </h4>
 
         <div className="space-y-2 text-gray-600">
@@ -89,7 +89,7 @@ export const Profile: React.FC = () => {
         className="w-full py-3.5 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 font-bold rounded-2xl flex items-center justify-center space-x-2 transition"
       >
         <LogOut className="w-4 h-4" />
-        <span>Logout / ??????????????</span>
+        <span>Logout / సంజీవనిసంజీవని</span>
       </button>
     </div>
   );

@@ -1,247 +1,272 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useApp } from "../context/AppContext";
-import { fetchWeather, fetchMarketPrices } from "../services/api";
-import { WeatherData, MarketPrice } from "../types";
-import { Camera, CloudRain, Thermometer, Wind, Droplets, TrendingUp, Users, Truck, Warehouse, Calendar, ArrowRight, Sparkles, AlertTriangle, ShieldAlert } from "lucide-react";
+import { 
+  CloudSun, 
+  Camera, 
+  TrendingUp, 
+  Users, 
+  Building2, 
+  Warehouse, 
+  Truck, 
+  Sparkles, 
+  ArrowRight,
+  AlertTriangle,
+  ChevronRight,
+  MapPin,
+  Sprout,
+  Bot
+} from "lucide-react";
 import { VoiceReader } from "../components/VoiceReader";
 
 export const Home: React.FC = () => {
-  const { farmer, t, setActiveTab, setIsAiModalOpen, language } = useApp();
-  const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [marketPrices, setMarketPrices] = useState<MarketPrice[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { farmer, setActiveTab, t, setIsAiModalOpen, notifications } = useApp();
 
-  useEffect(() => {
-    async function loadHomeData() {
-      const wData = await fetchWeather();
-      setWeather(wData);
-      const mData = await fetchMarketPrices();
-      setMarketPrices(mData.slice(0, 4));
-      setLoading(false);
+  const mandiPrices = [
+    { crop: "Tomato", mandi: "Guntur Mandi", price: "₹2,800", unit: "/quintal", change: "+5.2%", status: "up" },
+    { crop: "Chilli", mandi: "Guntur Yard", price: "₹18,500", unit: "/quintal", change: "+2.1%", status: "up" },
+    { crop: "Cotton", mandi: "Warangal Mandi", price: "₹7,200", unit: "/quintal", change: "-1.0%", status: "down" },
+    { crop: "Onion", mandi: "Kurnool Market", price: "₹1,950", unit: "/quintal", change: "+3.4%", status: "up" },
+    { crop: "Maize", mandi: "Eluru Mandi", price: "₹2,100", unit: "/quintal", change: "0.0%", status: "stable" }
+  ];
+
+  const quickActions = [
+    {
+      id: "crop",
+      title: t("check_my_crop"),
+      desc: "AI plant disease identification & treatment",
+      icon: Camera,
+      color: "bg-[#E8F5E9] text-[#15803D] border-[#C8E6C9]",
+      action: () => setActiveTab("crop")
+    },
+    {
+      id: "market",
+      title: t("market_prices"),
+      desc: "Live mandi rates & direct buyers",
+      icon: TrendingUp,
+      color: "bg-amber-50 text-amber-700 border-amber-200",
+      action: () => setActiveTab("market")
+    },
+    {
+      id: "work",
+      title: t("farm_workers"),
+      desc: "Book harvesting & planting labor team",
+      icon: Users,
+      color: "bg-blue-50 text-blue-700 border-blue-200",
+      action: () => setActiveTab("work")
+    },
+    {
+      id: "fpo",
+      title: t("fpo"),
+      desc: "District Farmer Producer Organizations",
+      icon: Building2,
+      color: "bg-indigo-50 text-indigo-700 border-indigo-200",
+      action: () => setActiveTab("market")
+    },
+    {
+      id: "storage",
+      title: t("cold_storage"),
+      desc: "Nearby cold storage availability & rates",
+      icon: Warehouse,
+      color: "bg-teal-50 text-teal-700 border-teal-200",
+      action: () => setActiveTab("market")
+    },
+    {
+      id: "transport",
+      title: t("transport"),
+      desc: "Book transport vehicle for produce",
+      icon: Truck,
+      color: "bg-rose-50 text-rose-700 border-rose-200",
+      action: () => setActiveTab("market")
     }
-    loadHomeData();
-  }, []);
+  ];
 
-  const getLocalizedWeatherCond = () => {
-    if (!weather) return "";
-    if (language === "te") return weather.condition_te || weather.condition;
-    if (language === "hi") return weather.condition_hi || weather.condition;
-    return weather.condition;
-  };
-
-  const getLocalizedAdvice = () => {
-    if (!weather) return "";
-    if (language === "te") return weather.advice_te || weather.advice_en;
-    if (language === "hi") return weather.advice_hi || weather.advice_en;
-    return weather.advice_en;
-  };
+  const weatherAdvice = "Rain expected today (65% probability). Inspect field soil moisture before irrigation. Avoid unnecessary watering.";
 
   return (
-    <div className="space-y-5 pb-8 max-w-md mx-auto">
-      {/* Top Greeting */}
-      <div className="flex items-center justify-between bg-gradient-to-r from-[#1E5128] via-[#2E6B3A] to-[#1E5128] p-4 rounded-2xl text-white shadow-lg border border-[#3E8B4A]/50">
-        <div>
-          <span className="text-[11px] font-bold text-amber-300 uppercase tracking-wider">{t("good_morning")}</span>
-          <h2 className="text-xl font-extrabold text-white leading-tight">{farmer.full_name}</h2>
-          <p className="text-xs text-emerald-200 mt-0.5">
-            ?? {farmer.village}, {farmer.district} � <span className="font-semibold text-amber-200">{farmer.main_crop}</span> ({farmer.farm_size_acres} Acres)
-          </p>
+    <div className="space-y-6 pb-8 max-w-4xl mx-auto">
+      {/* Farmer Welcome Banner */}
+      <div className="bg-white p-5 rounded-3xl border border-gray-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white font-extrabold flex items-center justify-center text-lg shadow-sm">
+            {farmer.full_name.charAt(0)}
+          </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <h2 className="text-xl font-extrabold text-gray-900">
+                {t("good_morning")}, {farmer.full_name} 🌱
+              </h2>
+            </div>
+            <p className="text-xs text-gray-500 flex items-center space-x-1 mt-0.5 font-medium">
+              <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+              <span>{farmer.village}, {farmer.district} • </span>
+              <Sprout className="w-3.5 h-3.5 text-emerald-600 ml-1" />
+              <span>{farmer.main_crop} ({farmer.farm_size_acres} Acres)</span>
+            </p>
+          </div>
         </div>
 
         <button
           onClick={() => setIsAiModalOpen(true)}
-          className="p-3 bg-amber-400 text-gray-900 rounded-2xl font-bold text-xs flex flex-col items-center shadow-lg hover:scale-105 transition"
+          className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-2xl shadow-sm flex items-center justify-center space-x-2 transition"
         >
-          <Sparkles className="w-5 h-5 text-gray-900 mb-0.5" />
-          <span>Ask AI</span>
+          <Bot className="w-4 h-4 text-amber-300" />
+          <span>{t("ask_saathi")}</span>
         </button>
       </div>
 
-      {/* Weather Intelligence Card */}
-      <div className="bg-gradient-to-br from-emerald-900 via-[#1E5128] to-emerald-950 rounded-3xl p-5 text-white shadow-xl border border-emerald-700/50 relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-          <CloudRain className="w-32 h-32 text-amber-300" />
-        </div>
-
-        <div className="flex justify-between items-start mb-3">
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="text-xs font-bold text-emerald-300 uppercase tracking-wider">Live Weather Intelligence</span>
-              <span className="px-2 py-0.5 rounded-full bg-emerald-500/30 text-amber-300 text-[10px] font-bold border border-emerald-400/40">
-                Open-Meteo API
-              </span>
-            </div>
-            <h3 className="text-3xl font-extrabold text-amber-300 mt-1">
-              {weather ? `${weather.temperature}�C` : "28.5�C"}
-            </h3>
-            <p className="text-sm font-semibold text-emerald-100">{getLocalizedWeatherCond()}</p>
-          </div>
-
-          <div className="text-right">
-            <span className="text-[11px] text-emerald-300">Rain Prob.</span>
-            <div className="text-lg font-bold text-amber-300 flex items-center justify-end space-x-1">
-              <CloudRain className="w-4 h-4 text-sky-400" />
-              <span>{weather ? `${weather.rain_probability}%` : "65%"}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Weather Metrics Bar */}
-        <div className="grid grid-cols-3 gap-2 bg-emerald-950/60 p-2.5 rounded-2xl border border-emerald-800/60 text-xs mb-3">
-          <div className="flex items-center space-x-1.5 text-emerald-200">
-            <Droplets className="w-4 h-4 text-sky-400" />
-            <div>
-              <span className="text-[10px] text-gray-400 block">Humidity</span>
-              <span className="font-bold text-white">{weather ? `${weather.humidity}%` : "74%"}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-1.5 text-emerald-200">
-            <Wind className="w-4 h-4 text-amber-300" />
-            <div>
-              <span className="text-[10px] text-gray-400 block">Wind</span>
-              <span className="font-bold text-white">{weather ? `${weather.wind_speed} km/h` : "12 km/h"}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-1.5 text-emerald-200">
-            <Thermometer className="w-4 h-4 text-orange-400" />
-            <div>
-              <span className="text-[10px] text-gray-400 block">Status</span>
-              <span className="font-bold text-emerald-300 text-[11px]">Updated</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Weather Farm Advice */}
-        <div className="bg-amber-400/10 border border-amber-400/30 p-3 rounded-2xl text-xs text-amber-100">
-          <div className="flex items-center justify-between mb-1">
-            <span className="font-bold text-amber-300 flex items-center space-x-1">
-              <span>?? {t("today_advice")}</span>
+      {/* Light Weather Intelligence Widget */}
+      <div className="bg-gradient-to-br from-emerald-50/90 via-white to-green-50/60 p-6 rounded-3xl border border-emerald-200/80 shadow-xs space-y-4">
+        <div className="flex items-center justify-between border-b border-emerald-100 pb-3">
+          <div className="flex items-center space-x-2">
+            <CloudSun className="w-6 h-6 text-emerald-700" />
+            <span className="text-xs font-extrabold text-emerald-900 uppercase tracking-wider">
+              Live Weather Intelligence
             </span>
-            <VoiceReader text={getLocalizedAdvice()} />
           </div>
-          <p className="leading-relaxed">{getLocalizedAdvice()}</p>
+
+          <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100/80 px-3 py-1 rounded-full border border-emerald-200">
+            Open-Meteo API Live
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="bg-white/90 p-3.5 rounded-2xl border border-emerald-100 shadow-2xs">
+            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block">Temperature</span>
+            <span className="text-2xl font-extrabold text-gray-900">28.5°C</span>
+            <span className="text-[11px] text-emerald-700 font-medium block">Partly Cloudy</span>
+          </div>
+
+          <div className="bg-white/90 p-3.5 rounded-2xl border border-emerald-100 shadow-2xs">
+            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block">Rain Prob.</span>
+            <span className="text-2xl font-extrabold text-blue-600">65%</span>
+            <span className="text-[11px] text-gray-500 font-medium block">Moderate Rain</span>
+          </div>
+
+          <div className="bg-white/90 p-3.5 rounded-2xl border border-emerald-100 shadow-2xs">
+            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block">Humidity</span>
+            <span className="text-2xl font-extrabold text-gray-900">74%</span>
+            <span className="text-[11px] text-gray-500 font-medium block">Moist Air</span>
+          </div>
+
+          <div className="bg-white/90 p-3.5 rounded-2xl border border-emerald-100 shadow-2xs">
+            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block">Wind Speed</span>
+            <span className="text-2xl font-extrabold text-gray-900">12 km/h</span>
+            <span className="text-[11px] text-gray-500 font-medium block">Gentle Breeze</span>
+          </div>
+        </div>
+
+        {/* Farm Advice Block */}
+        <div className="bg-white p-4 rounded-2xl border border-emerald-200/90 shadow-2xs space-y-1.5">
+          <div className="flex items-center justify-between">
+            <h4 className="text-xs font-bold text-emerald-900 uppercase tracking-wider flex items-center space-x-1.5">
+              <Sparkles className="w-4 h-4 text-amber-500" />
+              <span>Today's Farm Advice</span>
+            </h4>
+            <VoiceReader text={weatherAdvice} />
+          </div>
+          <p className="text-xs text-gray-700 leading-relaxed font-medium">
+            {weatherAdvice}
+          </p>
         </div>
       </div>
 
-      {/* Weather Alerts if present */}
-      {weather && weather.alerts && weather.alerts.length > 0 && (
-        <div className="bg-red-900/10 border border-red-500/30 p-3.5 rounded-2xl text-xs text-red-900 flex items-start space-x-3 shadow-sm">
-          <ShieldAlert className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-          <div>
-            <span className="font-extrabold text-red-700 block mb-0.5">{weather.alerts[0].title_te || weather.alerts[0].title}</span>
-            <p className="text-gray-700 leading-snug">{weather.alerts[0].message_te || weather.alerts[0].message_en}</p>
+      {/* Weather Alert Notification Banner */}
+      {notifications.length > 0 && (
+        <div className="bg-amber-50/90 p-4 rounded-2xl border border-amber-200/80 shadow-2xs flex items-start space-x-3 text-amber-900">
+          <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <h4 className="text-xs font-bold text-amber-900">{notifications[0].title}</h4>
+            <p className="text-xs text-amber-800 mt-0.5 font-medium">{notifications[0].message}</p>
           </div>
         </div>
       )}
 
-      {/* Primary CTA Button: CHECK MY CROP */}
-      <button
-        onClick={() => setActiveTab("crop")}
-        className="w-full p-4 bg-gradient-to-r from-[#1E5128] via-[#2E6B3A] to-[#1E5128] text-white rounded-3xl shadow-xl border-2 border-amber-400 flex items-center justify-between hover:scale-[1.01] active:scale-[0.99] transition"
-      >
-        <div className="flex items-center space-x-3 text-left">
-          <div className="w-12 h-12 rounded-2xl bg-amber-400 text-gray-900 flex items-center justify-center shadow-lg">
-            <Camera className="w-7 h-7" />
-          </div>
-          <div>
-            <h3 className="text-lg font-extrabold text-amber-300 leading-none">{t("check_my_crop")}</h3>
-            <p className="text-xs text-emerald-100 mt-1">Camera AI Plant Identification & Disease Care</p>
-          </div>
+      {/* Primary Crop Check CTA Card */}
+      <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 p-6 rounded-3xl text-white shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <span className="bg-emerald-500/40 text-emerald-100 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider border border-emerald-400/30">
+            Primary Feature
+          </span>
+          <h3 className="text-xl font-extrabold text-white">{t("check_my_crop")}</h3>
+          <p className="text-xs text-emerald-100/90 max-w-sm">
+            Capture a plant leaf photo using your phone camera for instant AI disease identification & organic treatment guidance.
+          </p>
         </div>
 
-        <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-amber-300">
-          <ArrowRight className="w-5 h-5" />
+        <button
+          onClick={() => setActiveTab("crop")}
+          className="px-6 py-3.5 bg-amber-400 hover:bg-amber-300 text-gray-900 font-extrabold text-xs rounded-2xl shadow-md transition flex items-center justify-center space-x-2 shrink-0"
+        >
+          <Camera className="w-4 h-4 text-gray-900" />
+          <span>Take Leaf Photo</span>
+          <ArrowRight className="w-4 h-4 text-gray-900" />
+        </button>
+      </div>
+
+      {/* Quick Action Grid */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between px-1">
+          <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-wider">
+            Quick Actions & Services
+          </h3>
+          <span className="text-xs text-gray-500 font-medium">Farmer Control Hub</span>
         </div>
-      </button>
 
-      {/* Quick Actions Grid */}
-      <div>
-        <h3 className="text-sm font-extrabold text-gray-800 mb-3 uppercase tracking-wider">Quick Actions & Services</h3>
-
-        <div className="grid grid-cols-2 gap-3 text-xs">
-          <button
-            onClick={() => setActiveTab("market")}
-            className="p-3.5 bg-white border border-emerald-100 rounded-2xl shadow-sm hover:border-emerald-400 transition text-left flex items-center space-x-3"
-          >
-            <div className="p-2.5 rounded-xl bg-emerald-100 text-[#1E5128]">
-              <TrendingUp className="w-5 h-5" />
-            </div>
-            <div>
-              <span className="font-bold text-gray-900 block">{t("market_prices")}</span>
-              <span className="text-[10px] text-emerald-700 font-semibold">Live Mandi Trends</span>
-            </div>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("market")}
-            className="p-3.5 bg-white border border-emerald-100 rounded-2xl shadow-sm hover:border-emerald-400 transition text-left flex items-center space-x-3"
-          >
-            <div className="p-2.5 rounded-xl bg-amber-100 text-amber-800">
-              <Users className="w-5 h-5" />
-            </div>
-            <div>
-              <span className="font-bold text-gray-900 block">{t("find_buyers")}</span>
-              <span className="text-[10px] text-gray-500">Verified Buyers & FPOs</span>
-            </div>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("work")}
-            className="p-3.5 bg-white border border-emerald-100 rounded-2xl shadow-sm hover:border-emerald-400 transition text-left flex items-center space-x-3"
-          >
-            <div className="p-2.5 rounded-xl bg-blue-100 text-blue-800">
-              <Users className="w-5 h-5" />
-            </div>
-            <div>
-              <span className="font-bold text-gray-900 block">{t("farm_workers")}</span>
-              <span className="text-[10px] text-blue-700 font-semibold">Coordinator Booking</span>
-            </div>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("market")}
-            className="p-3.5 bg-white border border-emerald-100 rounded-2xl shadow-sm hover:border-emerald-400 transition text-left flex items-center space-x-3"
-          >
-            <div className="p-2.5 rounded-xl bg-indigo-100 text-indigo-800">
-              <Warehouse className="w-5 h-5" />
-            </div>
-            <div>
-              <span className="font-bold text-gray-900 block">{t("cold_storage")}</span>
-              <span className="text-[10px] text-gray-500">Map Storage & Transport</span>
-            </div>
-          </button>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
+          {quickActions.map((act) => {
+            const Icon = act.icon;
+            return (
+              <button
+                key={act.id}
+                onClick={act.action}
+                className="bg-white p-4 rounded-2xl border border-gray-200 hover:border-emerald-400 hover:shadow-md transition text-left flex flex-col justify-between group"
+              >
+                <div className={"w-10 h-10 rounded-xl flex items-center justify-center mb-3 " + act.color}>
+                  <Icon className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-gray-900 group-hover:text-emerald-700 transition">{act.title}</h4>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-snug line-clamp-2">{act.desc}</p>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Mandi Prices Preview Card */}
-      <div className="bg-white p-4 rounded-3xl border border-emerald-100 shadow-sm">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="text-xs font-bold text-gray-800 uppercase tracking-wider flex items-center space-x-1.5">
-            <TrendingUp className="w-4 h-4 text-emerald-700" />
-            <span>Latest Market Prices (???? ????)</span>
-          </h4>
+      {/* Mandi Rates Summary Section */}
+      <div className="bg-white p-5 rounded-3xl border border-gray-200 shadow-xs space-y-3">
+        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div className="flex items-center space-x-2">
+            <TrendingUp className="w-5 h-5 text-emerald-700" />
+            <h3 className="text-sm font-extrabold text-gray-900">{t("live_mandi")}</h3>
+          </div>
+
           <button
             onClick={() => setActiveTab("market")}
-            className="text-xs font-bold text-[#1E5128] hover:underline"
+            className="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center space-x-1"
           >
-            View All ?
+            <span>View All Mandis</span>
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="space-y-2.5 text-xs">
-          {marketPrices.map((item) => (
-            <div key={item.id} className="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 hover:bg-emerald-50/50 transition">
-              <div className="flex items-center space-x-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
-                <span className="font-bold text-gray-900">{item.crop_te || item.crop}</span>
-                <span className="text-[10px] text-gray-400">({item.mandi})</span>
+        <div className="divide-y divide-gray-100 text-xs">
+          {mandiPrices.map((row, idx) => (
+            <div key={idx} className="py-2.5 flex items-center justify-between">
+              <div>
+                <span className="font-bold text-gray-900 text-sm">{row.crop}</span>
+                <span className="text-[11px] text-gray-500 block">{row.mandi}</span>
               </div>
+
               <div className="text-right">
-                <span className="font-extrabold text-[#1E5128]">?{item.price.toLocaleString()}</span>
-                <span className="text-[10px] text-gray-500"> / {item.unit}</span>
-                <span className="ml-1 text-[10px] font-bold text-emerald-600">+{item.change_pct}%</span>
+                <span className="font-extrabold text-gray-900 text-sm">{row.price}</span>
+                <span className="text-[10px] text-gray-400">{row.unit}</span>
+                <span className={`text-[10px] font-bold ml-2 px-1.5 py-0.5 rounded ${
+                  row.status === "up" ? "bg-emerald-100 text-emerald-800" : "bg-gray-100 text-gray-600"
+                }`}>
+                  {row.change}
+                </span>
               </div>
             </div>
           ))}

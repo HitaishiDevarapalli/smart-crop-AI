@@ -1,99 +1,242 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useApp } from "../context/AppContext";
-import { Sprout, Bell, Globe, User } from "lucide-react";
+import { Sprout, Bell, Globe, User, Home, ShieldCheck, ChevronDown, Check, Leaf, TrendingUp, Users, Search, Sparkles } from "lucide-react";
 import { Language } from "../types";
 
 export const Header: React.FC = () => {
-  const { language, setLanguage, t, unreadCount, farmer, setActiveTab, setScreen } = useApp();
+  const { language, setLanguage, t, unreadCount, farmer, activeTab, setActiveTab, setScreen, screen } = useApp();
   const [showLangMenu, setShowLangMenu] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
 
-  const langLabels: Record<Language, string> = {
-    te: "??????",
-    hi: "??????",
-    en: "English"
+  const searchPlaceholders = [
+    "Search 'Tomato Early Blight'...",
+    "Search 'Guntur Mandi Prices'...",
+    "Search 'Sri Lakshmi Buyers'...",
+    "Search 'Cold Storage Near Me'...",
+    "Search 'Paddy Harvest Workers'...",
+    "Search 'PM Kisan Scheme'...",
+    "Search 'Drone Spraying'..."
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPlaceholderIndex((prev) => (prev + 1) % searchPlaceholders.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const searchSuggestions = [
+    { type: "crop", icon: "🔬", title: "Tomato Early Blight Treatment", target: () => { setScreen("main"); setActiveTab("crop"); } },
+    { type: "crop", icon: "🌿", title: "Chilli Leaf Curl Virus Guide", target: () => { setScreen("main"); setActiveTab("crop"); } },
+    { type: "market", icon: "🛒", title: "Guntur Mandi Tomato Prices (₹2,800/qtl)", target: () => { setScreen("main"); setActiveTab("market"); } },
+    { type: "market", icon: "🌶️", title: "Chilli Teja Rates (₹15,500/qtl)", target: () => { setScreen("main"); setActiveTab("market"); } },
+    { type: "buyer", icon: "🏢", title: "Sri Lakshmi Agri Processing Buyers", target: () => { setScreen("main"); setActiveTab("market"); } },
+    { type: "fpo", icon: "🏛️", title: "Amaravathi Farmers Producer Co (FPO)", target: () => { setScreen("main"); setActiveTab("market"); } },
+    { type: "storage", icon: "❄️", title: "Sri Lakshmi Cold Storage (120 MT Free)", target: () => { setScreen("main"); setActiveTab("market"); } },
+    { type: "work", icon: "👨‍🌾", title: "Book Harvesting Workers (₹500/day)", target: () => { setScreen("main"); setActiveTab("work"); } },
+    { type: "scheme", icon: "📜", title: "PM Kisan Samman Nidhi (₹6,000/yr)", target: () => { setScreen("main"); setActiveTab("market"); } },
+    { type: "machinery", icon: "🚜", title: "Mahindra 575 Tractor Rental (₹600/hr)", target: () => { setScreen("main"); setActiveTab("market"); } }
+  ];
+
+  const filteredSuggestions = searchQuery.trim() === ""
+    ? searchSuggestions.slice(0, 5)
+    : searchSuggestions.filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  const handleGlobalSearchSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return;
+
+    if (q.includes("buyer") || q.includes("procurement") || q.includes("wholesaler") || q.includes("exporter") || q.includes("sri lakshmi")) {
+      setScreen("main");
+      setActiveTab("market");
+    } else if (q.includes("price") || q.includes("mandi") || q.includes("rate") || q.includes("guntur")) {
+      setScreen("main");
+      setActiveTab("market");
+    } else if (q.includes("storage") || q.includes("cold") || q.includes("warehouse")) {
+      setScreen("main");
+      setActiveTab("market");
+    } else if (q.includes("worker") || q.includes("labor") || q.includes("labour") || q.includes("harvesting") || q.includes("srinivas")) {
+      setScreen("main");
+      setActiveTab("work");
+    } else if (q.includes("disease") || q.includes("blight") || q.includes("leaf") || q.includes("pest") || q.includes("crop check")) {
+      setScreen("main");
+      setActiveTab("crop");
+    } else if (q.includes("pdf") || q.includes("resource") || q.includes("form") || q.includes("manual") || q.includes("pm kisan") || q.includes("kcc loan") || q.includes("calculator")) {
+      setScreen("resources");
+    } else {
+      setScreen("main");
+      setActiveTab("market");
+    }
   };
 
+  const langLabels: Record<Language, string> = {
+    en: "English",
+    te: "తెలుగు",
+    hi: "हिन्दी"
+  };
+
+  const navItems = [
+    { id: "home", label: t("home"), action: () => setScreen("landing") },
+    { id: "crop", label: "Crop Care", action: () => { setScreen("main"); setActiveTab("crop"); } },
+    { id: "market_prices", label: "Market Prices", action: () => { setScreen("main"); setActiveTab("market"); } },
+    { id: "buyers_fpos", label: "Buyers & FPOs", action: () => { setScreen("main"); setActiveTab("market"); } },
+    { id: "storage_logistics", label: "Storage & Logistics", action: () => { setScreen("main"); setActiveTab("market"); } },
+    { id: "resources", label: "Resources", action: () => setScreen("resources") },
+    { id: "contact", label: "Contact us", action: () => { setScreen("main"); setActiveTab("work"); } }
+  ];
+
   return (
-    <header className="sticky top-0 z-40 bg-[#1E5128] text-white shadow-md border-b border-[#2E6B3A] px-4 py-3">
-      <div className="max-w-4xl mx-auto flex items-center justify-between">
-        {/* Brand Logo & Name */}
+    <header className="sticky top-0 z-40 w-full shadow-md select-none font-sans">
+      {/* 1. TOP OLIVE GREEN BAR */}
+      <div className="bg-[#4D7133] text-white py-2.5 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+        {/* Left: Brand Logo & Title */}
         <div 
-          className="flex items-center space-x-2.5 cursor-pointer"
-          onClick={() => {
-            setActiveTab("home");
-            setScreen("main");
-          }}
+          className="flex items-center space-x-3 cursor-pointer shrink-0"
+          onClick={() => setScreen("landing")}
         >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#4E9F3D] to-[#1E5128] flex items-center justify-center shadow-md border border-white/20">
-            <Sprout className="w-6 h-6 text-amber-300" />
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="SANJEEVANI Logo" 
+            className="w-9 h-9 object-contain bg-white rounded-lg p-0.5 shadow-xs" 
+          />
           <div>
-            <h1 className="text-xl font-extrabold tracking-wide text-white leading-tight font-sans">
-              ??????? <span className="text-amber-300 text-xs font-normal">Sanjeevani</span>
+            <h1 className="text-base sm:text-lg font-extrabold tracking-tight leading-none text-white">
+              SANJEEVANI
             </h1>
-            <p className="text-[10px] text-emerald-200 font-medium tracking-tight">
-              {t("tagline")}
+            <p className="text-[10px] text-emerald-100 font-medium tracking-tight mt-0.5">
+              Direct Market & Crop Care
             </p>
           </div>
         </div>
 
-        {/* Right Action Icons: Language Selector, Notifications, Farmer Avatar */}
-        <div className="flex items-center space-x-3">
-          {/* Language Selector Dropdown */}
+        {/* Center: Search Bar with Form Submit & SEO Dropdown */}
+        <div className="flex-1 max-w-xl mx-2 hidden sm:block relative">
+          <form onSubmit={handleGlobalSearchSubmit} className="relative flex items-center">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+              placeholder={searchPlaceholders[placeholderIndex]}
+              className="w-full bg-white text-gray-900 text-xs px-4 py-2 rounded-full shadow-inner focus:outline-none placeholder-gray-400 font-semibold pr-10 transition-all duration-300"
+            />
+            <button 
+              type="submit"
+              className="absolute right-1 w-7 h-7 bg-[#2E1A11] text-white rounded-full flex items-center justify-center hover:bg-black transition cursor-pointer"
+            >
+              <Search className="w-3.5 h-3.5" />
+            </button>
+          </form>
+
+          {/* LIVE SEO SEARCH SUGGESTIONS DROPDOWN */}
+          {isSearchFocused && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white text-gray-900 rounded-2xl shadow-2xl border border-gray-200 overflow-hidden z-50 p-2 text-xs space-y-1">
+              <div className="flex items-center justify-between px-3 py-1 text-[10px] font-extrabold text-emerald-800 uppercase tracking-wider bg-emerald-50 rounded-lg">
+                <span className="flex items-center space-x-1">
+                  <Sparkles className="w-3 h-3 text-emerald-600" />
+                  <span>SEO Search Suggestions</span>
+                </span>
+                <span>Instant Direct Results</span>
+              </div>
+
+              {filteredSuggestions.map((item, idx) => (
+                <button
+                  key={idx}
+                  onMouseDown={() => {
+                    setSearchQuery(item.title);
+                    item.target();
+                  }}
+                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-emerald-50 flex items-center space-x-2.5 transition group cursor-pointer"
+                >
+                  <span className="text-base shrink-0">{item.icon}</span>
+                  <span className="font-bold text-gray-800 group-hover:text-[#4D7133] truncate">
+                    {item.title}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right Status & Controls */}
+        <div className="flex items-center space-x-3 shrink-0 text-xs">
+          {/* Online Pill */}
+          <div className="hidden md:flex items-center space-x-1.5 bg-[#3B5B25] text-emerald-200 px-2.5 py-1 rounded-full text-[11px] font-bold border border-emerald-400/30">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>• Online</span>
+          </div>
+
+          {/* Language Selector */}
           <div className="relative">
             <button
               onClick={() => setShowLangMenu(!showLangMenu)}
-              className="flex items-center space-x-1.5 bg-emerald-900/60 border border-emerald-600/50 hover:bg-emerald-800 text-xs px-2.5 py-1.5 rounded-full font-medium transition"
+              className="flex items-center space-x-1.5 bg-white/90 hover:bg-white text-gray-800 px-3 py-1 rounded-full font-extrabold text-xs shadow-xs transition"
             >
-              <Globe className="w-3.5 h-3.5 text-amber-300" />
+              <span className="w-2 h-2 rounded-full bg-sky-500"></span>
               <span>{langLabels[language]}</span>
+              <ChevronDown className="w-3 h-3 text-gray-500" />
             </button>
 
             {showLangMenu && (
-              <div className="absolute right-0 mt-2 w-36 bg-white text-gray-800 rounded-xl shadow-xl border border-gray-200 py-1 z-50 overflow-hidden text-sm">
-                {(["te", "hi", "en"] as Language[]).map((lang) => (
+              <div className="absolute right-0 mt-2 w-36 bg-white text-gray-900 rounded-2xl shadow-2xl border border-gray-200 py-1 z-50 overflow-hidden text-xs">
+                {(["en", "te", "hi"] as Language[]).map((lang) => (
                   <button
                     key={lang}
                     onClick={() => {
                       setLanguage(lang);
                       setShowLangMenu(false);
                     }}
-                    className={`w-full text-left px-4 py-2 hover:bg-emerald-50 transition flex items-center justify-between ${
-                      language === lang ? "font-bold text-[#1E5128] bg-emerald-50/80" : ""
+                    className={`w-full text-left px-4 py-2 transition flex items-center justify-between ${
+                      language === lang ? "font-bold text-[#4D7133] bg-emerald-50" : "hover:bg-gray-50 text-gray-700"
                     }`}
                   >
                     <span>{langLabels[lang]}</span>
-                    {language === lang && <span className="text-xs text-amber-600">?</span>}
+                    {language === lang && <Check className="w-3.5 h-3.5 text-[#4D7133]" />}
                   </button>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Notification Bell */}
-          <button 
-            onClick={() => setActiveTab("home")}
-            className="relative p-2 rounded-full bg-emerald-900/40 border border-emerald-600/40 hover:bg-emerald-800 text-white transition"
-          >
-            <Bell className="w-4 h-4 text-emerald-100" />
-            {unreadCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 bg-amber-400 text-gray-900 text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center border-2 border-[#1E5128]">
-                {unreadCount}
-              </span>
-            )}
-          </button>
-
-          {/* Farmer Profile Avatar */}
+          {/* User Profile Badge */}
           <button
-            onClick={() => setActiveTab("profile")}
-            className="w-9 h-9 rounded-full bg-amber-400/20 border-2 border-amber-400 overflow-hidden flex items-center justify-center text-amber-300 hover:opacity-90 transition"
+            onClick={() => {
+              setActiveTab("profile");
+              setScreen("main");
+            }}
+            className="flex items-center space-x-1.5 bg-[#3B5B25] hover:bg-[#304B1D] text-white px-3 py-1 rounded-full text-xs font-bold border border-emerald-400/30 transition"
           >
-            {farmer.profile_photo_url ? (
-              <img src={farmer.profile_photo_url} alt="Profile" className="w-full h-full object-cover" />
-            ) : (
-              <User className="w-5 h-5 text-amber-300" />
-            )}
+            <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span className="truncate max-w-[100px]">{farmer.full_name.split(' ')[0]}</span>
+            <span className="bg-emerald-800 text-[9px] px-1.5 py-0.5 rounded text-emerald-200 uppercase font-bold">Farmer</span>
           </button>
+        </div>
+      </div>
+
+      {/* 2. SECONDARY DEEP BROWN NAV BAR */}
+      <div className="bg-[#2D1B13] text-gray-200 py-1.5 border-b border-[#20130D]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center space-x-6 text-xs sm:text-sm font-extrabold overflow-x-auto no-scrollbar">
+          {navItems.map((item) => {
+            const isActive = (item.id === "home" && screen === "landing") || (item.id === "crop" && activeTab === "crop" && screen === "main") || (item.id === "market_prices" && activeTab === "market" && screen === "main");
+            return (
+              <button
+                key={item.id}
+                onClick={item.action}
+                className={`py-1 px-3 rounded-md transition whitespace-nowrap ${
+                  isActive
+                    ? "bg-white/20 text-white font-black border-b-2 border-amber-400"
+                    : "hover:text-amber-300 text-gray-300"
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
         </div>
       </div>
     </header>

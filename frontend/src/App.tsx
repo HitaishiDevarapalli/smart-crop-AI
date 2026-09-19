@@ -1,9 +1,9 @@
 import React from "react";
 import { AppProvider, useApp } from "./context/AppContext";
 import { Header } from "./components/Header";
-import { BottomNav } from "./components/BottomNav";
 import { SanjeevaniAIFloatingButton } from "./components/SanjeevaniAIFloatingButton";
 import { OfflineBanner } from "./components/OfflineBanner";
+import { LandingPage } from "./pages/LandingPage";
 import { Splash } from "./pages/Splash";
 import { LanguageSelect } from "./pages/LanguageSelect";
 import { Onboarding } from "./pages/Onboarding";
@@ -15,6 +15,9 @@ import { Market } from "./pages/Market";
 import { WorkCoordinator } from "./pages/WorkCoordinator";
 import { Profile } from "./pages/Profile";
 import { SanjeevaniAIChat } from "./pages/SanjeevaniAIChat";
+import { AdminDashboard } from "./pages/AdminDashboard";
+import { DiagnosisHistory } from "./pages/DiagnosisHistory";
+import { Resources } from "./pages/Resources";
 
 const MainContent: React.FC = () => {
   const { screen, activeTab } = useApp();
@@ -24,22 +27,33 @@ const MainContent: React.FC = () => {
   if (screen === "onboarding") return <Onboarding />;
   if (screen === "auth") return <Auth />;
   if (screen === "profile_setup") return <ProfileSetup />;
+  if (screen === "admin") return <AdminDashboard />;
+  if (screen === "history") return <DiagnosisHistory />;
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] flex flex-col font-sans antialiased text-gray-900 select-none">
+    <div className="min-h-screen bg-[#F8FBF6] flex flex-col font-sans antialiased text-[#263238] select-none">
       <Header />
       <OfflineBanner />
 
-      <main className="flex-1 px-4 pt-4 pb-24 max-w-md w-full mx-auto">
-        {activeTab === "home" && <Home />}
-        {activeTab === "crop" && <CropCheck />}
-        {activeTab === "market" && <Market />}
-        {activeTab === "work" && <WorkCoordinator />}
-        {activeTab === "profile" && <Profile />}
-      </main>
+      {screen === "landing" ? (
+        <main className="flex-1 w-full">
+          <LandingPage />
+        </main>
+      ) : screen === "resources" ? (
+        <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20">
+          <Resources />
+        </main>
+      ) : (
+        <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20">
+          {activeTab === "home" && <Home />}
+          {activeTab === "crop" && <CropCheck />}
+          {activeTab === "market" && <Market />}
+          {activeTab === "work" && <WorkCoordinator />}
+          {activeTab === "profile" && <Profile />}
+        </main>
+      )}
 
       <SanjeevaniAIFloatingButton />
-      <BottomNav />
       <SanjeevaniAIChat />
     </div>
   );

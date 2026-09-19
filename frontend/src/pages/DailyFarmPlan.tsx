@@ -38,7 +38,7 @@ export const DailyFarmPlan: React.FC = () => {
         <div>
           <h2 className="text-xl font-extrabold flex items-center space-x-2">
             <Calendar className="w-5 h-5 text-amber-300" />
-            <span>My Day (???? ??????? ????????)</span>
+            <span>My Day (కూలీలు సంజీవని సంజీవని?)</span>
           </h2>
           <p className="text-xs text-emerald-200 mt-1">Smart farm routine tailored for {farmer.main_crop}.</p>
         </div>
@@ -48,7 +48,7 @@ export const DailyFarmPlan: React.FC = () => {
       <div className="bg-white p-4 rounded-3xl border border-amber-200 shadow-sm space-y-3">
         <div className="flex items-center space-x-2 text-amber-700 font-extrabold text-sm border-b pb-2 border-amber-100">
           <Sun className="w-5 h-5 text-amber-500" />
-          <span>Morning Routine (???? ????????)</span>
+          <span>Morning Routine (కూలీలు సంజీవని?)</span>
         </div>
 
         <div className="space-y-2 text-xs">
@@ -75,7 +75,7 @@ export const DailyFarmPlan: React.FC = () => {
       <div className="bg-white p-4 rounded-3xl border border-orange-200 shadow-sm space-y-3">
         <div className="flex items-center space-x-2 text-orange-700 font-extrabold text-sm border-b pb-2 border-orange-100">
           <Sunset className="w-5 h-5 text-orange-500" />
-          <span>Afternoon Routine (????????? ????????)</span>
+          <span>Afternoon Routine (సంజీవనిధర సంజీవని?)</span>
         </div>
 
         <div className="space-y-2 text-xs">
@@ -102,7 +102,7 @@ export const DailyFarmPlan: React.FC = () => {
       <div className="bg-white p-4 rounded-3xl border border-indigo-200 shadow-sm space-y-3">
         <div className="flex items-center space-x-2 text-indigo-800 font-extrabold text-sm border-b pb-2 border-indigo-100">
           <Moon className="w-5 h-5 text-indigo-600" />
-          <span>Evening Routine (???????? ????????)</span>
+          <span>Evening Routine (సంజీవని? సంజీవని?)</span>
         </div>
 
         <div className="space-y-2 text-xs">

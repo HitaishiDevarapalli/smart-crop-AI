@@ -1,16 +1,17 @@
 {
-  "name": "Sanjeevani",
-  "short_name": "Sanjeevani",
-  "description": "From Crop Care to Market � Your Farming Companion",
+  "name": "SANJEEVANI — Smart Crop Care & Direct Market Access",
+  "short_name": "SANJEEVANI",
+  "description": "From Crop Care to Market — Your Farming Saathi.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F8F9FA",
-  "theme_color": "#1E5128",
+  "background_color": "#1B4D3E",
+  "theme_color": "#1B4D3E",
   "icons": [
     {
-      "src": "/sprout.svg",
+      "src": "/favicon.svg",
       "sizes": "192x192 512x512",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ]
 }

@@ -3,14 +3,17 @@ import { Language, FarmerProfile, NotificationItem } from "../types";
 import { translations } from "../i18n/translations";
 import { getSyncQueue, clearSyncQueue } from "../services/offlineDb";
 
+export type ScreenType = "landing" | "splash" | "language" | "onboarding" | "auth" | "profile_setup" | "main" | "admin" | "history" | "resources";
+export type TabType = "home" | "crop" | "market" | "work" | "profile";
+
 interface AppContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: keyof typeof translations["en"]) => string;
-  screen: "splash" | "language" | "onboarding" | "auth" | "profile_setup" | "main";
-  setScreen: (screen: "splash" | "language" | "onboarding" | "auth" | "profile_setup" | "main") => void;
-  activeTab: "home" | "crop" | "market" | "work" | "profile";
-  setActiveTab: (tab: "home" | "crop" | "market" | "work" | "profile") => void;
+  screen: ScreenType;
+  setScreen: (screen: ScreenType) => void;
+  activeTab: TabType;
+  setActiveTab: (tab: TabType) => void;
   farmer: FarmerProfile;
   setFarmer: React.Dispatch<React.SetStateAction<FarmerProfile>>;
   isOnline: boolean;
@@ -20,6 +23,8 @@ interface AppContextType {
   unreadCount: number;
   triggerSync: () => Promise<void>;
   isSyncing: boolean;
+  selectedDiagnosis: any;
+  setSelectedDiagnosis: (diag: any) => void;
 }
 
 const defaultFarmer: FarmerProfile = {
@@ -30,7 +35,7 @@ const defaultFarmer: FarmerProfile = {
   state: "Andhra Pradesh",
   main_crop: "Tomato",
   farm_size_acres: 3.5,
-  language: "te",
+  language: "en",
   profile_photo_url: null
 };
 
@@ -38,35 +43,46 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
-    return (localStorage.getItem("sanjeevani_lang") as Language) || "te";
+    return (localStorage.getItem("sanjeevani_lang") as Language) || "en";
   });
-  const [screen, setScreen] = useState<"splash" | "language" | "onboarding" | "auth" | "profile_setup" | "main">("splash");
-  const [activeTab, setActiveTab] = useState<"home" | "crop" | "market" | "work" | "profile">("home");
+  const [screen, setScreen] = useState<ScreenType>("landing");
+  const [activeTab, setActiveTab] = useState<TabType>("home");
   const [farmer, setFarmer] = useState<FarmerProfile>(defaultFarmer);
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
   const [isAiModalOpen, setIsAiModalOpen] = useState<boolean>(false);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const [selectedDiagnosis, setSelectedDiagnosis] = useState<any>(null);
 
   const [notifications] = useState<NotificationItem[]>([
     {
       id: "n1",
       type: "weather",
-      title: "??? Rain Alert Expected Today",
-      title_te: "??? ????? ????? ????????",
-      title_hi: "??? ?? ????? ?? ???????",
-      message: "65% rain probability today. Check soil moisture.",
+      title: "Rain Expected Today (65%)",
+      title_te: "నేడు వర్షపాతం సూచన",
+      title_hi: "आज बारिश की संभावना",
+      message: "Heavy rain expected in Guntur region. Inspect soil moisture before irrigating.",
       time: "10m ago",
       is_read: false
     },
     {
       id: "n2",
       type: "market",
-      title: "?? Tomato Prices Up +5.2%",
-      title_te: "?? ????? ???? +5.2% ????????",
-      title_hi: "?? ????? ?? ??? +5.2% ????",
-      message: "Current rate in Guntur Market is ?2,800/quintal.",
+      title: "Tomato Prices Increased +5.2%",
+      title_te: "టమోటా ధరలు +5.2% పెరిగాయి",
+      title_hi: "टमाटर के भाव में +5.2% की वृद्धि",
+      message: "Current rate in Guntur Mandi is ₹2,800/quintal.",
       time: "1h ago",
       is_read: false
+    },
+    {
+      id: "n3",
+      type: "worker",
+      title: "Farm Workers Available",
+      title_te: "కూలీల బృందం అందుబాటులో ఉంది",
+      title_hi: "मजदूर टीम उपलब्ध",
+      message: "Work coordinator has 6 experienced workers ready for tomato harvesting tomorrow.",
+      time: "3h ago",
+      is_read: true
     }
   ]);
 
@@ -101,7 +117,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const queue = await getSyncQueue();
       if (queue && queue.length > 0) {
         console.log("Synchronizing offline queue items:", queue);
-        await new Promise((r) => setTimeout(r, 1500));
+        await new Promise((r) => setTimeout(r, 1200));
         await clearSyncQueue();
       }
     } catch (e) {
@@ -131,7 +147,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         notifications,
         unreadCount,
         triggerSync,
-        isSyncing
+        isSyncing,
+        selectedDiagnosis,
+        setSelectedDiagnosis
       }}
     >
       {children}
