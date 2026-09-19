@@ -225,9 +225,11 @@ export const Auth: React.FC = () => {
           <div>
             {/* Logo & Brand Header */}
             <div className="text-center mb-5">
-              <div className="w-13 h-13 w-12 h-12 bg-[#23451B] text-white rounded-2xl flex items-center justify-center shadow-md mx-auto mb-2">
-                <Sprout className="w-7 h-7 text-amber-300" />
-              </div>
+              <img 
+                src="/logo.png" 
+                alt="Sanjeevani Logo" 
+                className="w-16 h-16 object-contain mx-auto mb-2 drop-shadow-md" 
+              />
               <h2 className="text-2xl font-serif font-extrabold text-[#1E3E17] tracking-tight">
                 Sanjeevani
               </h2>
