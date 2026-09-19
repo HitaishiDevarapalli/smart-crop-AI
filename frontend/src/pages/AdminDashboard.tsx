@@ -141,8 +141,22 @@ export const AdminDashboard: React.FC = () => {
 
   // Active Admin Subtab
   const [activeTabModule, setActiveTabModule] = useState<
-    "farmers" | "buyers" | "storage" | "crops" | "agreements" | "audit" | "settings"
-  >("farmers");
+    "cms" | "farmers" | "buyers" | "storage" | "crops" | "agreements" | "audit" | "settings"
+  >("cms");
+
+  // CMS & Main Web Content States
+  const [cmsBannerText, setCmsBannerText] = useState("🚨 Monsoon Mandi Special: Direct crop procurement active across AP & Telangana with 0% commission!");
+  const [cmsBannerEnabled, setCmsBannerEnabled] = useState(true);
+  const [cmsSupportPhone, setCmsSupportPhone] = useState("8977520059");
+  const [cmsMandiRates, setCmsMandiRates] = useState({
+    tomato: 2800,
+    chilli: 18500,
+    paddy: 2750,
+    cotton: 7200,
+    onion: 1950,
+    maize: 2100
+  });
+  const [cmsPublishSuccess, setCmsPublishSuccess] = useState("");
 
   // Audit Logs State
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([
@@ -912,6 +926,7 @@ export const AdminDashboard: React.FC = () => {
       {/* 3. SUBTAB MODULE NAVIGATION BAR */}
       <div className="flex items-center space-x-2 border-b border-gray-300 pb-3 overflow-x-auto no-scrollbar text-xs font-extrabold">
         {[
+          { id: "cms", label: "🌐 Live Main Web Control & CMS", icon: Building, badge: "CMS Live" },
           { id: "farmers", label: "Farmer Management", icon: Sprout, badge: totalFarmersCount },
           { id: "buyers", label: "Buyer Management", icon: ShoppingBag, badge: totalBuyersCount },
           { id: "storage", label: "Cold Storage Management", icon: Warehouse, badge: totalStorageCount },
@@ -945,6 +960,188 @@ export const AdminDashboard: React.FC = () => {
       </div>
 
       {/* 4. MODULE CONTENT SECTIONS */}
+
+      {/* TAB 0: LIVE MAIN WEB CONTROL & CMS MODULE */}
+      {activeTabModule === "cms" && (
+        <div className="space-y-6 bg-white p-6 rounded-3xl border border-emerald-100 shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b pb-4">
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] font-black uppercase text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300">
+                  CMS Master Control Panel
+                </span>
+              </div>
+              <h2 className="text-2xl font-extrabold text-gray-900 mt-1 flex items-center space-x-2">
+                <span>🌐 Direct Main Web Content & CMS Manager</span>
+              </h2>
+              <p className="text-xs text-gray-500 font-medium mt-0.5">
+                Admin can directly update banners, support hotlines, live Mandi rates, and platform configuration reflected live on the main website.
+              </p>
+            </div>
+
+            <button
+              onClick={() => {
+                logAuditAction("CMS", "Published Live Main Web Updates", "CMS_LIVE", "Previous Site Config", "New Site Config Published");
+                setCmsPublishSuccess("✅ Success: All CMS updates are published live to the Main Web Platform!");
+                setTimeout(() => setCmsPublishSuccess(""), 4000);
+              }}
+              className="px-5 py-3 bg-emerald-700 hover:bg-emerald-800 text-amber-300 font-black text-xs rounded-2xl shadow-xl transition active:scale-95 cursor-pointer flex items-center space-x-2 shrink-0"
+            >
+              <RefreshCw className="w-4 h-4 text-amber-300 animate-spin" />
+              <span>Publish Changes Live to Main Web</span>
+            </button>
+          </div>
+
+          {cmsPublishSuccess && (
+            <div className="p-4 bg-emerald-50 border-2 border-emerald-400 rounded-2xl text-emerald-900 text-xs font-black text-center animate-bounce">
+              {cmsPublishSuccess}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-xs">
+            
+            {/* CMS EDIT CONTROLS */}
+            <div className="space-y-4">
+              
+              {/* 1. Main Website Announcement Banner Editor */}
+              <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-extrabold text-amber-950 text-sm flex items-center space-x-1.5">
+                    <span>📢 Main Web Announcement Banner</span>
+                  </h3>
+                  <label className="flex items-center space-x-2 cursor-pointer text-xs font-bold text-gray-700">
+                    <input
+                      type="checkbox"
+                      checked={cmsBannerEnabled}
+                      onChange={(e) => setCmsBannerEnabled(e.target.checked)}
+                      className="w-4 h-4 accent-emerald-700"
+                    />
+                    <span>Show Banner</span>
+                  </label>
+                </div>
+
+                <input
+                  type="text"
+                  value={cmsBannerText}
+                  onChange={(e) => setCmsBannerText(e.target.value)}
+                  className="w-full p-3 border border-amber-300 rounded-xl bg-white text-gray-900 font-bold outline-none focus:border-emerald-700"
+                  placeholder="Enter announcement text to show on main website..."
+                />
+              </div>
+
+              {/* 2. Platform Support Hotline Number */}
+              <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200 space-y-3">
+                <h3 className="font-extrabold text-blue-950 text-sm flex items-center space-x-1.5">
+                  <span>📞 Call & WhatsApp Support Hotline</span>
+                </h3>
+                <div>
+                  <label className="block text-gray-600 font-bold mb-1">Customer Support & WhatsApp Helpline Number</label>
+                  <input
+                    type="text"
+                    value={cmsSupportPhone}
+                    onChange={(e) => setCmsSupportPhone(e.target.value)}
+                    className="w-full p-3 border border-blue-300 rounded-xl bg-white text-gray-900 font-extrabold text-sm outline-none focus:border-blue-700"
+                  />
+                  <span className="text-[10px] text-gray-500 font-medium mt-1 block">
+                    All Call & WhatsApp buttons across main site will route to this number.
+                  </span>
+                </div>
+              </div>
+
+              {/* 3. Live Mandi Crop Price Editor */}
+              <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 space-y-3">
+                <h3 className="font-extrabold text-emerald-950 text-sm flex items-center space-x-1.5">
+                  <span>🌾 Real-Time Mandi Crop Rates (₹ / Quintal)</span>
+                </h3>
+                <div className="grid grid-cols-2 gap-3 font-semibold">
+                  <div>
+                    <label className="block text-gray-700 font-bold mb-1">🍅 Tomato Rate</label>
+                    <input
+                      type="number"
+                      value={cmsMandiRates.tomato}
+                      onChange={(e) => setCmsMandiRates({ ...cmsMandiRates, tomato: parseInt(e.target.value) || 0 })}
+                      className="w-full p-2.5 border border-emerald-300 rounded-xl bg-white font-extrabold text-emerald-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-bold mb-1">🌶️ Chilli Rate</label>
+                    <input
+                      type="number"
+                      value={cmsMandiRates.chilli}
+                      onChange={(e) => setCmsMandiRates({ ...cmsMandiRates, chilli: parseInt(e.target.value) || 0 })}
+                      className="w-full p-2.5 border border-emerald-300 rounded-xl bg-white font-extrabold text-emerald-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-bold mb-1">🌾 Paddy / Rice</label>
+                    <input
+                      type="number"
+                      value={cmsMandiRates.paddy}
+                      onChange={(e) => setCmsMandiRates({ ...cmsMandiRates, paddy: parseInt(e.target.value) || 0 })}
+                      className="w-full p-2.5 border border-emerald-300 rounded-xl bg-white font-extrabold text-emerald-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-bold mb-1">☁️ Cotton Rate</label>
+                    <input
+                      type="number"
+                      value={cmsMandiRates.cotton}
+                      onChange={(e) => setCmsMandiRates({ ...cmsMandiRates, cotton: parseInt(e.target.value) || 0 })}
+                      className="w-full p-2.5 border border-emerald-300 rounded-xl bg-white font-extrabold text-emerald-900"
+                    />
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* LIVE PREVIEW OF MAIN WEBSITE */}
+            <div className="p-5 rounded-3xl bg-stone-900 text-white space-y-4 shadow-xl border border-stone-800">
+              <div className="flex items-center justify-between border-b border-stone-700 pb-3">
+                <div className="flex items-center space-x-2">
+                  <span className="w-3 h-3 rounded-full bg-red-500"></span>
+                  <span className="w-3 h-3 rounded-full bg-amber-500"></span>
+                  <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
+                  <span className="text-xs font-mono font-bold text-amber-300 ml-2">Main Web Live Preview Window</span>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950 px-2.5 py-0.5 rounded-full border border-emerald-800">
+                  LIVE BROADCAST
+                </span>
+              </div>
+
+              {/* Preview Banner */}
+              {cmsBannerEnabled && (
+                <div className="p-3 bg-amber-400 text-gray-900 rounded-xl text-xs font-black shadow-md">
+                  {cmsBannerText}
+                </div>
+              )}
+
+              {/* Preview Content */}
+              <div className="p-4 rounded-2xl bg-stone-800 space-y-3 text-xs">
+                <div className="flex justify-between items-center text-emerald-400 font-extrabold">
+                  <span>SANJEEVANI Web Platform</span>
+                  <span>Hotline: {cmsSupportPhone}</span>
+                </div>
+
+                <div className="pt-2 border-t border-stone-700">
+                  <h4 className="font-bold text-stone-300 mb-2">Live Mandi Prices Output:</h4>
+                  <div className="grid grid-cols-2 gap-2 font-mono text-xs">
+                    <div className="p-2 bg-stone-900 rounded-xl">Tomato: <strong className="text-amber-300">₹{cmsMandiRates.tomato}/qtl</strong></div>
+                    <div className="p-2 bg-stone-900 rounded-xl">Chilli: <strong className="text-amber-300">₹{cmsMandiRates.chilli}/qtl</strong></div>
+                    <div className="p-2 bg-stone-900 rounded-xl">Paddy: <strong className="text-amber-300">₹{cmsMandiRates.paddy}/qtl</strong></div>
+                    <div className="p-2 bg-stone-900 rounded-xl">Cotton: <strong className="text-amber-300">₹{cmsMandiRates.cotton}/qtl</strong></div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2 text-center text-[11px] text-stone-400">
+                Any changes saved here immediately update the main website experience for all farmers & buyers.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {/* TAB 1: FARMER MANAGEMENT MODULE */}
       {activeTabModule === "farmers" && (
