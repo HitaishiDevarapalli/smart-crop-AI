@@ -28,6 +28,7 @@ const MainContent: React.FC = () => {
   if (screen === "auth") return <Auth />;
   if (screen === "profile_setup") return <ProfileSetup />;
   if (screen === "history") return <DiagnosisHistory />;
+  if (screen === "admin") return <AdminDashboard />;
 
   return (
     <div className="min-h-screen bg-[#F8FBF6] flex flex-col font-sans antialiased text-[#263238] select-none">
@@ -41,10 +42,6 @@ const MainContent: React.FC = () => {
       ) : screen === "resources" ? (
         <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20">
           <Resources />
-        </main>
-      ) : screen === "admin" ? (
-        <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20">
-          <AdminDashboard />
         </main>
       ) : (
         <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20">
