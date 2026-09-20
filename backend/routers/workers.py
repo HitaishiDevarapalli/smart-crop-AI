@@ -1,92 +1,82 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 from typing import List, Optional
+from pydantic import BaseModel
+from database.db import get_db
+from database.models import WorkerTeam, WorkerRequest, AuditLog
 
-router = APIRouter(prefix="/api/workers", tags=["Farm Worker Coordination"])
+router = APIRouter(prefix="/api/workers", tags=["Farm Workers"])
 
-class WorkRequestSchema(BaseModel):
+class WorkerRequestCreate(BaseModel):
+    farmer_name: str
+    phone: str
     work_type: str
-    date: str
     workers_needed: int
-    location: str
-    instructions: Optional[str] = None
+    date: Optional[str] = "Tomorrow"
+    location: Optional[str] = "Tadikonda, Guntur"
 
-class StatusUpdateSchema(BaseModel):
-    request_id: str
-    new_status: str
+class WorkerStatusUpdate(BaseModel):
+    status: str # Requested, Assigned, In Progress, Completed, Cancelled
+    admin_name: Optional[str] = "Srinivas Rao (Coordinator)"
 
-# Central Coordinator State
-COORDINATOR_STATE = {
-    "coordinator_name": "Venkateswara Rao (Village Farm Coordinator)",
-    "region": "Guntur & Tadikonda Mandal",
-    "today_status": "Available",
-    "total_workers_available": 14,
-    "phone_number": "Demo Contact: +91 90000 55001",
-    "whatsapp_link": "https://wa.me/919000055001?text=Hello%20Coordinator,%20I%20need%20farm%20workers",
-    "is_demo": True,
-    "work_matrix": [
-        {"work_type": "Harvesting", "status": "Available", "rate_per_day": 500, "workers_free": 6},
-        {"work_type": "Planting & Sowing", "status": "Available", "rate_per_day": 450, "workers_free": 4},
-        {"work_type": "Field Cleaning & Weeding", "status": "Limited", "rate_per_day": 400, "workers_free": 2},
-        {"work_type": "Irrigation & Spraying", "status": "Unavailable", "rate_per_day": 450, "workers_free": 0}
-    ]
-}
-
-WORK_REQUESTS_LIST: List[dict] = [
-    {
-        "id": "wr_201",
-        "farmer_name": "Ramesh Kumar",
-        "work_type": "Harvesting",
-        "date": "2026-09-20",
-        "workers_needed": 4,
-        "location": "Tadikonda East Field",
-        "instructions": "Need workers by 7:00 AM for tomato harvest",
-        "status": "Confirmed",
-        "created_at": "Today, 08:00 AM"
-    }
-]
-
-@router.get("/coordinator")
-async def get_coordinator_info():
-    return {
-        "success": True,
-        "coordinator": COORDINATOR_STATE
-    }
-
-@router.get("/availability")
-async def get_worker_availability():
-    return {
-        "success": True,
-        "today_status": COORDINATOR_STATE["today_status"],
-        "total_available": COORDINATOR_STATE["total_workers_available"],
-        "matrix": COORDINATOR_STATE["work_matrix"]
-    }
+@router.get("/teams")
+def list_worker_teams(db: Session = Depends(get_db)):
+    return db.query(WorkerTeam).all()
 
 @router.get("/requests")
-async def get_work_requests():
-    return {
-        "success": True,
-        "requests": WORK_REQUESTS_LIST
-    }
+def list_worker_requests(status: Optional[str] = None, db: Session = Depends(get_db)):
+    query = db.query(WorkerRequest)
+    if status:
+        query = query.filter(WorkerRequest.status == status)
+    return query.order_by(WorkerRequest.created_at.desc()).all()
 
 @router.post("/requests")
-async def create_work_request(req: WorkRequestSchema):
-    new_req = req.model_dump()
-    new_req["id"] = f"wr_{201 + len(WORK_REQUESTS_LIST)}"
-    new_req["farmer_name"] = "Ramesh Kumar"
-    new_req["status"] = "Waiting for Coordinator"
-    new_req["created_at"] = "Just now"
-    WORK_REQUESTS_LIST.insert(0, new_req)
-    return {
-        "success": True,
-        "message": "Worker request submitted to Central Farm Work Coordinator.",
-        "request": new_req
-    }
+def create_worker_request(req: WorkerRequestCreate, db: Session = Depends(get_db)):
+    wreq = WorkerRequest(
+        farmer_name=req.farmer_name,
+        phone=req.phone,
+        work_type=req.work_type,
+        workers_needed=req.workers_needed,
+        date=req.date,
+        location=req.location,
+        status="Requested"
+    )
+    db.add(wreq)
 
-@router.post("/update-status")
-async def update_request_status(update: StatusUpdateSchema):
-    for item in WORK_REQUESTS_LIST:
-        if item["id"] == update.request_id:
-            item["status"] = update.new_status
-            return {"success": True, "request": item}
-    raise HTTPException(status_code=404, detail="Work request not found.")
+    audit = AuditLog(
+        action=f"New Farm Worker Request: {req.farmer_name} requested {req.workers_needed} workers",
+        user_name=req.farmer_name,
+        role="FARMER",
+        entity="Workers",
+        entity_id=wreq.id,
+        status="SUCCESS",
+        details=f"Work: {req.work_type} | Date: {req.date} | Location: {req.location}"
+    )
+    db.add(audit)
+
+    db.commit()
+    db.refresh(wreq)
+    return wreq
+
+@router.patch("/requests/{request_id}/status")
+def update_worker_request_status(request_id: str, req: WorkerStatusUpdate, db: Session = Depends(get_db)):
+    wreq = db.query(WorkerRequest).filter(WorkerRequest.id == request_id).first()
+    if not wreq:
+        raise HTTPException(status_code=404, detail="Request not found")
+    
+    wreq.status = req.status
+
+    audit = AuditLog(
+        action=f"Updated Worker Request Status: {wreq.farmer_name} -> {req.status}",
+        user_name=req.admin_name or "Srinivas Rao",
+        role="MASTER_ADMIN",
+        entity="Workers",
+        entity_id=wreq.id,
+        status="SUCCESS",
+        details=f"Request status set to {req.status}"
+    )
+    db.add(audit)
+
+    db.commit()
+    db.refresh(wreq)
+    return wreq
