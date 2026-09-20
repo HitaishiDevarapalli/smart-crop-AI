@@ -115,57 +115,6 @@ export const Profile: React.FC = () => {
         </div>
       </div>
 
-      {/* Buyer Business KYC Verification Card */}
-      {(farmer.user_role === "buyer" || farmer.buyer_kyc_number) && (
-        <div className="bg-gradient-to-r from-amber-500/10 via-amber-100 to-amber-50 p-4.5 rounded-3xl border border-amber-300 shadow-xs space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 text-amber-950 font-extrabold text-sm">
-              <ShieldCheck className="w-5 h-5 text-amber-700" />
-              <span>Buyer Business KYC Status</span>
-            </div>
-            <span className={`text-[10px] font-black px-2.5 py-1 rounded-full border ${
-              farmer.buyer_kyc_status === "VERIFIED"
-                ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                : farmer.buyer_kyc_status === "REJECTED"
-                ? "bg-red-100 text-red-800 border-red-300"
-                : "bg-amber-200 text-amber-900 border-amber-400"
-            }`}>
-              {farmer.buyer_kyc_status === "VERIFIED"
-                ? "VERIFIED ✅"
-                : farmer.buyer_kyc_status === "REJECTED"
-                ? "ACTION REQUIRED ❌"
-                : "PENDING ADMIN REVIEW ⏳"}
-            </span>
-          </div>
-
-          <div className="bg-white/90 p-3 rounded-2xl border border-amber-200 space-y-1.5 text-xs text-gray-700">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-500 font-semibold">Document Type:</span>
-              <span className="font-bold text-gray-900">{farmer.buyer_kyc_doc_type || "GSTIN Certificate"}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-500 font-semibold">Registration No:</span>
-              <span className="font-mono font-bold text-amber-900">{farmer.buyer_kyc_number || "28AABCU9012K1Z9"}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-500 font-semibold">Uploaded File:</span>
-              <span className="font-semibold text-emerald-800 truncate max-w-[180px]">📄 {farmer.buyer_kyc_filename || "GSTIN_Certificate.pdf"}</span>
-            </div>
-          </div>
-
-          <button
-            onClick={() => {
-              setScreen("profile_setup");
-              window.scrollTo(0, 0);
-            }}
-            className="w-full py-2.5 bg-amber-400 hover:bg-amber-500 text-gray-950 font-black rounded-2xl text-xs flex items-center justify-center space-x-1.5 shadow-xs transition cursor-pointer"
-          >
-            <Upload className="w-3.5 h-3.5" />
-            <span>Update / Re-upload Buyer KYC Certificate</span>
-          </button>
-        </div>
-      )}
-
       {/* 2. Core Profile Navigation Menu: Weather Today & Settings */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Weather Today Option - Opens Weather Intelligence Page */}
@@ -223,26 +172,9 @@ export const Profile: React.FC = () => {
         >
           <div className="flex items-center space-x-3 text-gray-800">
             <User className="w-5 h-5 text-emerald-700" />
-            <span className="font-bold">Edit Profile Details</span>
+            <span className="font-bold">Edit Farmer Profile Details</span>
           </div>
           <ChevronRight className="w-4 h-4 text-gray-400" />
-        </button>
-
-        <button
-          onClick={() => {
-            setScreen("profile_setup");
-            window.scrollTo(0, 0);
-          }}
-          className="w-full p-4 flex items-center justify-between hover:bg-amber-50/60 transition cursor-pointer bg-amber-50/30"
-        >
-          <div className="flex items-center space-x-3 text-gray-800">
-            <ShieldCheck className="w-5 h-5 text-amber-600" />
-            <div>
-              <span className="font-extrabold text-amber-950 block">Buyer Business KYC Verification</span>
-              <span className="text-[10px] text-gray-500 font-semibold">GSTIN / APMC / FSSAI Trade License & Verification Status</span>
-            </div>
-          </div>
-          <ChevronRight className="w-4 h-4 text-amber-600" />
         </button>
 
         <button

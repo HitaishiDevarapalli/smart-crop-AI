@@ -19,7 +19,7 @@ import {
 import { VoiceReader } from "../components/VoiceReader";
 
 export const Home: React.FC = () => {
-  const { farmer, setActiveTab, t, setIsAiModalOpen, notifications } = useApp();
+  const { farmer, setActiveTab, setMarketSubTab, t, setIsAiModalOpen, notifications } = useApp();
 
   const mandiPrices = [
     { crop: "Tomato", mandi: "Guntur Mandi", price: "₹2,800", unit: "/quintal", change: "+5.2%", status: "up" },
@@ -44,7 +44,7 @@ export const Home: React.FC = () => {
       desc: "Live mandi rates & direct buyers",
       icon: TrendingUp,
       color: "bg-amber-50 text-amber-700 border-amber-200",
-      action: () => setActiveTab("market")
+      action: () => { setActiveTab("market"); setMarketSubTab("prices"); }
     },
     {
       id: "work",
@@ -60,7 +60,7 @@ export const Home: React.FC = () => {
       desc: "District Farmer Producer Organizations",
       icon: Building2,
       color: "bg-indigo-50 text-indigo-700 border-indigo-200",
-      action: () => setActiveTab("market")
+      action: () => { setActiveTab("market"); setMarketSubTab("fpo"); }
     },
     {
       id: "storage",
@@ -68,7 +68,7 @@ export const Home: React.FC = () => {
       desc: "Nearby cold storage availability & rates",
       icon: Warehouse,
       color: "bg-teal-50 text-teal-700 border-teal-200",
-      action: () => setActiveTab("market")
+      action: () => { setActiveTab("market"); setMarketSubTab("storage"); }
     },
     {
       id: "transport",
@@ -76,7 +76,7 @@ export const Home: React.FC = () => {
       desc: "Book transport vehicle for produce",
       icon: Truck,
       color: "bg-rose-50 text-rose-700 border-rose-200",
-      action: () => setActiveTab("market")
+      action: () => { setActiveTab("market"); setMarketSubTab("transport"); }
     }
   ];
 

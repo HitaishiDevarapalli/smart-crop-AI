@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 
 export const LandingPage: React.FC = () => {
-  const { setScreen, language, setLanguage, t, setActiveTab } = useApp();
+  const { setScreen, language, setLanguage, t, setActiveTab, setMarketSubTab } = useApp();
 
   const heroSlides = [
     {
@@ -148,28 +148,28 @@ export const LandingPage: React.FC = () => {
               sub: "(Live Mandi)",
               icon: "🛒",
               bgIcon: "bg-emerald-50 text-emerald-700 border-emerald-200",
-              action: () => { setScreen("main"); setActiveTab("market"); }
+              action: () => { setScreen("main"); setActiveTab("market"); setMarketSubTab("prices"); }
             },
             {
               title: "Find Buyers & FPOs",
               sub: "(Direct Sales)",
               icon: "🏷️",
               bgIcon: "bg-emerald-50 text-emerald-700 border-emerald-200",
-              action: () => { setScreen("main"); setActiveTab("market"); }
+              action: () => { setScreen("main"); setActiveTab("market"); setMarketSubTab("buyers"); }
             },
             {
               title: "Cold Storage",
               sub: "(Nearby)",
               icon: "🏢",
               bgIcon: "bg-emerald-50 text-emerald-700 border-emerald-200",
-              action: () => { setScreen("main"); setActiveTab("market"); }
+              action: () => { setScreen("main"); setActiveTab("market"); setMarketSubTab("storage"); }
             },
             {
               title: "Logistics",
               sub: "(Book Transport)",
               icon: "🚚",
               bgIcon: "bg-emerald-50 text-emerald-700 border-emerald-200",
-              action: () => { setScreen("main"); setActiveTab("market"); }
+              action: () => { setScreen("main"); setActiveTab("market"); setMarketSubTab("transport"); }
             },
             {
               title: "Resources & Training",
