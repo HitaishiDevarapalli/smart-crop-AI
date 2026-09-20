@@ -86,7 +86,6 @@ export const Header: React.FC = () => {
     { id: "buyers_fpos", label: "Buyers & FPOs", action: () => { setScreen("main"); setActiveTab("market"); } },
     { id: "storage_logistics", label: "Storage & Logistics", action: () => { setScreen("main"); setActiveTab("market"); } },
     { id: "resources", label: "Resources", action: () => setScreen("resources") },
-    { id: "admin", label: "🛡️ Admin Master", action: () => setScreen("admin") },
     { id: "contact", label: "Contact us", action: () => { setScreen("main"); setActiveTab("work"); } }
   ];
 
@@ -204,16 +203,6 @@ export const Header: React.FC = () => {
             )}
           </div>
 
-          {/* Direct Admin Portal Button */}
-          <button
-            onClick={() => setScreen("admin")}
-            className="flex items-center space-x-1.5 bg-amber-400 hover:bg-amber-300 text-gray-900 px-3 py-1 rounded-full text-xs font-black shadow-md border border-amber-300 transition cursor-pointer active:scale-95 shrink-0"
-            title="Open Admin Master Control Portal"
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-gray-900" />
-            <span>Admin Portal</span>
-          </button>
-
           {/* User Profile Badge */}
           <button
             onClick={() => {
@@ -233,16 +222,13 @@ export const Header: React.FC = () => {
       <div className="bg-[#335328] text-gray-100 py-1.5 border-b border-[#29441F]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center space-x-4 sm:space-x-6 text-xs sm:text-sm font-extrabold overflow-x-auto no-scrollbar">
           {navItems.map((item) => {
-            const isActive = (item.id === "home" && screen === "landing") || (item.id === "crop" && activeTab === "crop" && screen === "main") || (item.id === "market_prices" && activeTab === "market" && screen === "main") || (item.id === "admin" && screen === "admin");
-            const isAdminTab = item.id === "admin";
+            const isActive = (item.id === "home" && screen === "landing") || (item.id === "crop" && activeTab === "crop" && screen === "main") || (item.id === "market_prices" && activeTab === "market" && screen === "main");
             return (
               <button
                 key={item.id}
                 onClick={item.action}
                 className={`py-1 px-3 rounded-xl transition whitespace-nowrap cursor-pointer flex items-center space-x-1 ${
-                  isAdminTab
-                    ? "bg-amber-400 text-gray-900 font-black hover:bg-amber-300 shadow-sm border border-amber-300"
-                    : isActive
+                  isActive
                     ? "bg-white/20 text-white font-black border-b-2 border-amber-300"
                     : "hover:text-amber-200 text-stone-200"
                 }`}

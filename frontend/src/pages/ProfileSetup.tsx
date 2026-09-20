@@ -6,8 +6,8 @@ import { CameraModal } from "../components/CameraModal";
 export const ProfileSetup: React.FC = () => {
   const { farmer, setFarmer, setScreen, setActiveTab } = useApp();
 
-  const [activeRole, setActiveRole] = useState<"farmer" | "buyer" | "storage" | "transport" | "coordinator" | "admin">(
-    farmer.user_role || "farmer"
+  const [activeRole, setActiveRole] = useState<"farmer" | "buyer" | "storage" | "transport" | "coordinator">(
+    (farmer.user_role as any) || "farmer"
   );
 
   // Common Profile State
@@ -89,7 +89,7 @@ export const ProfileSetup: React.FC = () => {
         </div>
 
         {/* Dynamic Role Switcher Tabs */}
-        <div className="grid grid-cols-5 gap-1 bg-gray-200/70 p-1 rounded-2xl text-xs">
+        <div className="grid grid-cols-4 gap-1 bg-gray-200/70 p-1 rounded-2xl text-xs">
           <button
             type="button"
             onClick={() => setActiveRole("farmer")}
@@ -99,19 +99,6 @@ export const ProfileSetup: React.FC = () => {
           >
             <Sprout className="w-3.5 h-3.5" />
             <span className="text-[11px]">Farmer</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              setActiveRole("admin");
-              setScreen("admin");
-            }}
-            className={`py-2 px-1 rounded-xl font-extrabold flex items-center justify-center space-x-1 transition ${
-              activeRole === "admin" ? "bg-amber-600 text-white shadow-xs" : "text-gray-700 hover:text-gray-900"
-            }`}
-          >
-            <span className="text-[11px]">Admin 👑</span>
           </button>
 
           <button

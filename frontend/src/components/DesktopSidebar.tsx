@@ -118,14 +118,6 @@ export const DesktopSidebar: React.FC = () => {
           <Globe className="w-4 h-4 text-gray-500" />
           <span>Public Website</span>
         </button>
-
-        <button
-          onClick={() => setScreen("admin")}
-          className="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-gray-100 transition font-medium"
-        >
-          <ShieldCheck className="w-4 h-4 text-amber-600" />
-          <span>Coordinator Admin</span>
-        </button>
       </div>
 
       {/* Footer User Badge */}

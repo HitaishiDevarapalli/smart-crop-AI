@@ -26,7 +26,7 @@ export const Auth: React.FC = () => {
   const [mode, setMode] = useState<"login" | "register">("login");
 
   // Selected Role
-  const [selectedRole, setSelectedRole] = useState<"farmer" | "buyer" | "storage" | "transport" | "admin">(
+  const [selectedRole, setSelectedRole] = useState<"farmer" | "buyer" | "storage" | "transport">(
     (farmer.user_role as any) || "farmer"
   );
 
@@ -65,14 +65,6 @@ export const Auth: React.FC = () => {
       activeBg: "bg-[#23451B] text-white border-[#23451B]"
     },
     {
-      id: "admin",
-      title: "Admin Panel 👑",
-      sub: "అడ్మిన్ / एडमिन",
-      icon: ShieldCheck,
-      badge: "Master Control Center",
-      activeBg: "bg-amber-600 text-white border-amber-600 font-extrabold"
-    },
-    {
       id: "buyer",
       title: "Crop Buyer",
       sub: "కొనుగోలుదారు / खरीददार",
@@ -105,12 +97,6 @@ export const Auth: React.FC = () => {
       return;
     }
     setError("");
-
-    if (selectedRole === "admin" || identifier.toLowerCase().includes("admin")) {
-      setIsAdminAuthenticated(true);
-      setScreen("admin");
-      return;
-    }
 
     if (authMethod === "otp" && step === "input") {
       setLoading(true);
@@ -277,7 +263,7 @@ export const Auth: React.FC = () => {
               <label className="block text-[11px] font-extrabold text-stone-700 uppercase tracking-wider mb-2">
                 Select Your Category:
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {roleConfigs.map((cfg) => {
                   const Icon = cfg.icon;
                   const isSelected = selectedRole === cfg.id;
