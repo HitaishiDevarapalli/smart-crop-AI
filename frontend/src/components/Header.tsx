@@ -1,92 +1,97 @@
 import React, { useState, useEffect } from "react";
 import { useApp } from "../context/AppContext";
-import { Sprout, Bell, Globe, User, Home, ShieldCheck, ChevronDown, Check, Leaf, TrendingUp, Users, Search, Sparkles } from "lucide-react";
 import { Language } from "../types";
+import { 
+  ChevronDown, 
+  Check, 
+  Search, 
+  Sparkles,
+  TrendingUp,
+  Warehouse,
+  Users,
+  ShieldCheck,
+  Sprout,
+  Bot
+} from "lucide-react";
 
 export const Header: React.FC = () => {
-  const { language, setLanguage, t, unreadCount, farmer, activeTab, setActiveTab, setScreen, screen } = useApp();
+  const { language, setLanguage, activeTab, setActiveTab, farmer, screen, setScreen, setIsAiModalOpen } = useApp();
   const [showLangMenu, setShowLangMenu] = useState(false);
-  const [showVideoModal, setShowVideoModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+  // Dynamic rotating placeholder for SEO Search Bar
+  const searchPlaceholders = [
+    "Search 'Guntur Mandi Prices'...",
+    "Search 'Tomato Early Blight Cure'...",
+    "Search 'Cold Storage near Guntur'...",
+    "Search 'Farm Harvesting Workers'...",
+    "Search 'Verified Chilli Buyers'..."
+  ];
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
 
-  const searchPlaceholders = [
-    "Search 'Tomato Early Blight'...",
-    "Search 'Guntur Mandi Prices'...",
-    "Search 'Sri Lakshmi Buyers'...",
-    "Search 'Cold Storage Near Me'...",
-    "Search 'Paddy Harvest Workers'...",
-    "Search 'PM Kisan Scheme'...",
-    "Search 'Drone Spraying'..."
-  ];
-
   useEffect(() => {
-    const timer = setInterval(() => {
+    const interval = setInterval(() => {
       setPlaceholderIndex((prev) => (prev + 1) % searchPlaceholders.length);
-    }, 3000);
-    return () => clearInterval(timer);
+    }, 4000);
+    return () => clearInterval(interval);
   }, []);
 
+  const langLabels: Record<Language, string> = {
+    en: "English",
+    te: "తెలుగు",
+    hi: "हिंदी"
+  };
+
+  // SEO Smart Search suggestions catalog
   const searchSuggestions = [
-    { type: "crop", icon: "🔬", title: "Tomato Early Blight Treatment", target: () => { setScreen("main"); setActiveTab("crop"); } },
-    { type: "crop", icon: "🌿", title: "Chilli Leaf Curl Virus Guide", target: () => { setScreen("main"); setActiveTab("crop"); } },
-    { type: "market", icon: "🛒", title: "Guntur Mandi Tomato Prices (₹2,800/qtl)", target: () => { setScreen("main"); setActiveTab("market"); } },
-    { type: "market", icon: "🌶️", title: "Chilli Teja Rates (₹15,500/qtl)", target: () => { setScreen("main"); setActiveTab("market"); } },
-    { type: "buyer", icon: "🏢", title: "Sri Lakshmi Agri Processing Buyers", target: () => { setScreen("main"); setActiveTab("market"); } },
-    { type: "fpo", icon: "🏛️", title: "Amaravathi Farmers Producer Co (FPO)", target: () => { setScreen("main"); setActiveTab("market"); } },
-    { type: "storage", icon: "❄️", title: "Sri Lakshmi Cold Storage (120 MT Free)", target: () => { setScreen("main"); setActiveTab("market"); } },
-    { type: "work", icon: "👨‍🌾", title: "Book Harvesting Workers (₹500/day)", target: () => { setScreen("main"); setActiveTab("work"); } },
-    { type: "scheme", icon: "📜", title: "PM Kisan Samman Nidhi (₹6,000/yr)", target: () => { setScreen("main"); setActiveTab("market"); } },
-    { type: "machinery", icon: "🚜", title: "Mahindra 575 Tractor Rental (₹600/hr)", target: () => { setScreen("main"); setActiveTab("market"); } }
+    { title: "Live Guntur Mandi Prices (Tomato, Chilli, Cotton)", target: () => { setScreen("main"); setActiveTab("market"); window.scrollTo(0, 0); }, icon: "📈" },
+    { title: "Check Crop Disease with AI Camera Scanner", target: () => { setScreen("main"); setActiveTab("crop"); window.scrollTo(0, 0); }, icon: "📸" },
+    { title: "Weather Today & Rain Intelligence", target: () => { setScreen("weather_today"); window.scrollTo(0, 0); }, icon: "⛅" },
+    { title: "Farmer Profile & Settings", target: () => { setScreen("main"); setActiveTab("profile"); window.scrollTo(0, 0); }, icon: "👤" },
+    { title: "Book Cold Storage Space (Sri Lakshmi Warehouse)", target: () => { setScreen("main"); setActiveTab("market"); window.scrollTo(0, 0); }, icon: "🏬" },
+    { title: "Hire Farm Workers & Harvesting Labor", target: () => { setScreen("main"); setActiveTab("work"); window.scrollTo(0, 0); }, icon: "👨‍🌾" },
+    { title: "Verified Agricultural Buyers & Exporters", target: () => { setScreen("main"); setActiveTab("market"); window.scrollTo(0, 0); }, icon: "🤝" }
   ];
 
-  const filteredSuggestions = searchQuery.trim() === ""
-    ? searchSuggestions.slice(0, 5)
-    : searchSuggestions.filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredSuggestions = searchSuggestions.filter(s => 
+    s.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const handleGlobalSearchSubmit = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    const q = searchQuery.toLowerCase().trim();
-    if (!q) return;
-
-    if (q.includes("buyer") || q.includes("procurement") || q.includes("wholesaler") || q.includes("exporter") || q.includes("sri lakshmi")) {
-      setScreen("main");
-      setActiveTab("market");
-    } else if (q.includes("price") || q.includes("mandi") || q.includes("rate") || q.includes("guntur")) {
-      setScreen("main");
-      setActiveTab("market");
-    } else if (q.includes("storage") || q.includes("cold") || q.includes("warehouse")) {
-      setScreen("main");
-      setActiveTab("market");
-    } else if (q.includes("worker") || q.includes("labor") || q.includes("labour") || q.includes("harvesting") || q.includes("srinivas")) {
-      setScreen("main");
-      setActiveTab("work");
-    } else if (q.includes("disease") || q.includes("blight") || q.includes("leaf") || q.includes("pest") || q.includes("crop check")) {
+  const handleGlobalSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    const q = searchQuery.toLowerCase();
+    if (q.includes("weather") || q.includes("rain") || q.includes("forecast")) {
+      setScreen("weather_today");
+    } else if (q.includes("crop") || q.includes("leaf") || q.includes("disease") || q.includes("scan")) {
       setScreen("main");
       setActiveTab("crop");
-    } else if (q.includes("pdf") || q.includes("resource") || q.includes("form") || q.includes("manual") || q.includes("pm kisan") || q.includes("kcc loan") || q.includes("calculator")) {
+    } else if (q.includes("worker") || q.includes("labor") || q.includes("contact") || q.includes("coordinator")) {
+      setScreen("main");
+      setActiveTab("work");
+    } else if (q.includes("profile") || q.includes("setting")) {
+      setScreen("main");
+      setActiveTab("profile");
+    } else if (q.includes("resource") || q.includes("guide")) {
       setScreen("resources");
     } else {
       setScreen("main");
       setActiveTab("market");
     }
-  };
-
-  const langLabels: Record<Language, string> = {
-    en: "English",
-    te: "తెలుగు",
-    hi: "हिन्दी"
+    window.scrollTo(0, 0);
+    setIsSearchFocused(false);
   };
 
   const navItems = [
-    { id: "home", label: t("home"), action: () => setScreen("landing") },
-    { id: "crop", label: "Crop Care", action: () => { setScreen("main"); setActiveTab("crop"); } },
-    { id: "market_prices", label: "Market Prices", action: () => { setScreen("main"); setActiveTab("market"); } },
-    { id: "buyers_fpos", label: "Buyers & FPOs", action: () => { setScreen("main"); setActiveTab("market"); } },
-    { id: "storage_logistics", label: "Storage & Logistics", action: () => { setScreen("main"); setActiveTab("market"); } },
-    { id: "resources", label: "Resources", action: () => setScreen("resources") },
-    { id: "contact", label: "Contact us", action: () => { setScreen("main"); setActiveTab("work"); } }
+    { id: "home", label: "Home", action: () => { setScreen("landing"); window.scrollTo(0, 0); } },
+    { id: "crop", label: "Crop Care", action: () => { setScreen("main"); setActiveTab("crop"); window.scrollTo(0, 0); } },
+    { id: "market_prices", label: "Market Prices", action: () => { setScreen("main"); setActiveTab("market"); window.scrollTo(0, 0); } },
+    { id: "buyers_fpos", label: "Buyers & FPOs", action: () => { setScreen("main"); setActiveTab("market"); window.scrollTo(0, 0); } },
+    { id: "storage_logistics", label: "Storage & Logistics", action: () => { setScreen("main"); setActiveTab("market"); window.scrollTo(0, 0); } },
+    { id: "resources", label: "Resources", action: () => { setScreen("resources"); window.scrollTo(0, 0); } },
+    { id: "contact", label: "Contact us", action: () => { setScreen("main"); setActiveTab("work"); window.scrollTo(0, 0); } },
+    { id: "profile", label: "Profile", action: () => { setScreen("main"); setActiveTab("profile"); window.scrollTo(0, 0); } }
   ];
 
   return (
@@ -96,7 +101,10 @@ export const Header: React.FC = () => {
         {/* Left: Brand Logo & Title */}
         <div 
           className="flex items-center space-x-3 cursor-pointer shrink-0"
-          onClick={() => setScreen("landing")}
+          onClick={() => {
+            setScreen("landing");
+            window.scrollTo(0, 0);
+          }}
         >
           <img 
             src="/logo.png" 
@@ -175,7 +183,7 @@ export const Header: React.FC = () => {
           <div className="relative">
             <button
               onClick={() => setShowLangMenu(!showLangMenu)}
-              className="flex items-center space-x-1.5 bg-white/90 hover:bg-white text-gray-800 px-3 py-1 rounded-full font-extrabold text-xs shadow-xs transition"
+              className="flex items-center space-x-1.5 bg-white/90 hover:bg-white text-gray-800 px-3 py-1 rounded-full font-extrabold text-xs shadow-xs transition cursor-pointer"
             >
               <span className="w-2 h-2 rounded-full bg-sky-500"></span>
               <span>{langLabels[language]}</span>
@@ -191,7 +199,7 @@ export const Header: React.FC = () => {
                       setLanguage(lang);
                       setShowLangMenu(false);
                     }}
-                    className={`w-full text-left px-4 py-2 transition flex items-center justify-between ${
+                    className={`w-full text-left px-4 py-2 transition flex items-center justify-between cursor-pointer ${
                       language === lang ? "font-bold text-[#5B8C46] bg-emerald-50" : "hover:bg-gray-50 text-gray-700"
                     }`}
                   >
@@ -208,8 +216,9 @@ export const Header: React.FC = () => {
             onClick={() => {
               setActiveTab("profile");
               setScreen("main");
+              window.scrollTo(0, 0);
             }}
-            className="flex items-center space-x-1.5 bg-[#487537] hover:bg-[#3C632C] text-white px-3 py-1 rounded-full text-xs font-bold border border-emerald-300/30 transition"
+            className="flex items-center space-x-1.5 bg-[#487537] hover:bg-[#3C632C] text-white px-3 py-1 rounded-full text-xs font-bold border border-emerald-300/30 transition cursor-pointer"
           >
             <span className="w-2 h-2 rounded-full bg-amber-300"></span>
             <span className="truncate max-w-[100px]">{farmer.full_name ? farmer.full_name.split(' ')[0] : "User"}</span>
@@ -224,7 +233,14 @@ export const Header: React.FC = () => {
       <div className="bg-[#335328] text-gray-100 py-1.5 border-b border-[#29441F]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center space-x-4 sm:space-x-6 text-xs sm:text-sm font-extrabold overflow-x-auto no-scrollbar">
           {navItems.map((item) => {
-            const isActive = (item.id === "home" && screen === "landing") || (item.id === "crop" && activeTab === "crop" && screen === "main") || (item.id === "market_prices" && activeTab === "market" && screen === "main");
+            const isActive = 
+              (item.id === "home" && screen === "landing") || 
+              (item.id === "crop" && activeTab === "crop" && screen === "main") || 
+              (item.id === "market_prices" && activeTab === "market" && screen === "main") ||
+              (item.id === "resources" && screen === "resources") ||
+              (item.id === "contact" && activeTab === "work" && screen === "main") ||
+              (item.id === "profile" && ((activeTab === "profile" && screen === "main") || screen === "weather_today" || screen === "settings"));
+
             return (
               <button
                 key={item.id}

@@ -2,8 +2,22 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { Language, FarmerProfile, NotificationItem } from "../types";
 import { translations } from "../i18n/translations";
 import { getSyncQueue, clearSyncQueue } from "../services/offlineDb";
+import { getSharedFarmers, saveSharedFarmers } from "../services/sharedStore";
 
-export type ScreenType = "landing" | "splash" | "language" | "onboarding" | "auth" | "profile_setup" | "main" | "admin" | "history" | "resources";
+export type ScreenType = 
+  | "landing" 
+  | "splash" 
+  | "language" 
+  | "onboarding" 
+  | "auth" 
+  | "profile_setup" 
+  | "main" 
+  | "admin" 
+  | "history" 
+  | "resources"
+  | "weather_today"
+  | "settings";
+
 export type TabType = "home" | "crop" | "market" | "work" | "profile";
 
 interface AppContextType {
@@ -38,7 +52,8 @@ const defaultFarmer: FarmerProfile = {
   main_crop: "Tomato",
   farm_size_acres: 3.5,
   language: "en",
-  profile_photo_url: null
+  profile_photo_url: null,
+  user_role: "farmer"
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -47,7 +62,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [language, setLanguageState] = useState<Language>(() => {
     return (localStorage.getItem("sanjeevani_lang") as Language) || "en";
   });
-  const [screen, setScreen] = useState<ScreenType>(() => {
+
+  const [screen, setScreenState] = useState<ScreenType>(() => {
     const search = window.location.search.toLowerCase();
     const hash = window.location.hash.toLowerCase();
     const path = window.location.pathname.toLowerCase();
@@ -56,6 +72,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     return "landing";
   });
+
+  const setScreen = (newScreen: ScreenType) => {
+    setScreenState(newScreen);
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  };
+
+  const [activeTab, setActiveTabState] = useState<TabType>("home");
+
+  const setActiveTab = (newTab: TabType) => {
+    setActiveTabState(newTab);
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  };
+
+  // Scroll to top automatically whenever screen or activeTab changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [screen, activeTab]);
 
   useEffect(() => {
     const checkRoute = () => {
@@ -72,8 +105,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       window.removeEventListener("hashchange", checkRoute);
     };
   }, []);
-  const [activeTab, setActiveTab] = useState<TabType>("home");
-  const [farmer, setFarmer] = useState<FarmerProfile>(defaultFarmer);
+
+  const [farmer, setFarmer] = useState<FarmerProfile>(() => {
+    try {
+      const saved = localStorage.getItem("sanjeevani_farmer_profile");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return defaultFarmer;
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("sanjeevani_farmer_profile", JSON.stringify(farmer));
+      // Also sync to shared farmers list
+      const currentList = getSharedFarmers();
+      const updatedList = currentList.map(f => {
+        if (f.phone === farmer.phone_number || f.name === farmer.full_name) {
+          return {
+            ...f,
+            name: farmer.full_name,
+            phone: farmer.phone_number,
+            village: farmer.village,
+            district: farmer.district,
+            state: farmer.state,
+            crop: farmer.main_crop,
+            farmSizeAcres: farmer.farm_size_acres,
+            profilePhoto: farmer.profile_photo_url
+          };
+        }
+        return f;
+      });
+      saveSharedFarmers(updatedList);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [farmer]);
+
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
   const [isAiModalOpen, setIsAiModalOpen] = useState<boolean>(false);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
