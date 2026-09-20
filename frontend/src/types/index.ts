@@ -11,12 +11,16 @@ export interface FarmerProfile {
   language: Language;
   profile_photo_url?: string | null;
   user_role?: "farmer" | "buyer" | "storage" | "transport" | "coordinator" | "admin";
-  // Buyer Profile Fields
+  // Buyer Profile & KYC Fields
   company_name?: string;
   buyer_type?: string;
   crop_required?: string;
   min_quantity_tons?: number;
   price_offered?: number;
+  buyer_kyc_status?: "PENDING" | "VERIFIED" | "REJECTED" | "NOT_SUBMITTED";
+  buyer_kyc_doc_type?: string;
+  buyer_kyc_number?: string;
+  buyer_kyc_filename?: string;
   // Storage Facility Profile Fields
   facility_name?: string;
   capacity_mt?: number;

@@ -29,9 +29,9 @@ export const ProfileSetup: React.FC = () => {
   const [priceOffered, setPriceOffered] = useState<number>(farmer.price_offered || 2900);
 
   // Buyer KYC Verification Fields
-  const [buyerKycDocType, setBuyerKycDocType] = useState("GSTIN Certificate");
-  const [buyerKycNumber, setBuyerKycNumber] = useState("28AABCU9012K1Z9");
-  const [buyerKycFileName, setBuyerKycFileName] = useState("GSTIN_28AABCU9012K1Z9_CERT.pdf");
+  const [buyerKycDocType, setBuyerKycDocType] = useState(farmer.buyer_kyc_doc_type || "GSTIN Certificate");
+  const [buyerKycNumber, setBuyerKycNumber] = useState(farmer.buyer_kyc_number || "28AABCU9012K1Z9");
+  const [buyerKycFileName, setBuyerKycFileName] = useState(farmer.buyer_kyc_filename || "GSTIN_28AABCU9012K1Z9_CERT.pdf");
   const kycDocInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleKycFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,6 +77,10 @@ export const ProfileSetup: React.FC = () => {
       crop_required: cropRequired,
       min_quantity_tons: minQty,
       price_offered: priceOffered,
+      buyer_kyc_status: activeRole === "buyer" ? (farmer.buyer_kyc_status || "PENDING") : farmer.buyer_kyc_status,
+      buyer_kyc_doc_type: buyerKycDocType,
+      buyer_kyc_number: buyerKycNumber,
+      buyer_kyc_filename: buyerKycFileName,
       facility_name: facilityName,
       capacity_mt: capacityMt,
       available_space_mt: availableSpaceMt,
