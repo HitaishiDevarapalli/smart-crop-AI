@@ -45,7 +45,6 @@ const MainContent: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#F8FBF6] flex flex-col font-sans antialiased text-[#263238] select-none">
       <Header />
-      <OfflineBanner />
 
       {screen === "landing" ? (
         <main className="flex-1 w-full">
