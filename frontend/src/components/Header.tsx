@@ -212,8 +212,10 @@ export const Header: React.FC = () => {
             className="flex items-center space-x-1.5 bg-[#487537] hover:bg-[#3C632C] text-white px-3 py-1 rounded-full text-xs font-bold border border-emerald-300/30 transition"
           >
             <span className="w-2 h-2 rounded-full bg-amber-300"></span>
-            <span className="truncate max-w-[100px]">{farmer.full_name.split(' ')[0]}</span>
-            <span className="bg-[#335328] text-[9px] px-1.5 py-0.5 rounded text-emerald-200 uppercase font-bold">Farmer</span>
+            <span className="truncate max-w-[100px]">{farmer.full_name ? farmer.full_name.split(' ')[0] : "User"}</span>
+            <span className="bg-[#335328] text-[9px] px-1.5 py-0.5 rounded text-amber-200 uppercase font-extrabold">
+              {farmer.user_role === "storage" ? "COLD STORAGE" : (farmer.user_role || "farmer").toUpperCase()}
+            </span>
           </button>
         </div>
       </div>

@@ -380,36 +380,63 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* OFFICIAL PLATFORM INTRODUCTION VIDEO SECTION */}
+      {/* LIVE AGRICULTURAL MARKET INTELLIGENCE & DIRECT FARMER NETWORK BANNER */}
       <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-emerald-100 space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+        <div className="bg-gradient-to-r from-white via-[#F4F9F4] to-white rounded-3xl p-6 sm:p-10 shadow-xl border border-emerald-200/80 space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-emerald-100 pb-4">
             <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#2E7D32] bg-emerald-100 px-3.5 py-1 rounded-full border border-emerald-200 inline-block mb-1.5">
-                Official Introduction Video
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#15803D] bg-emerald-100 px-3.5 py-1 rounded-full border border-emerald-300 inline-block mb-1.5">
+                🌾 Live Agri Ecosystem & Market Intelligence
               </span>
               <h2 className="text-2xl sm:text-3xl font-black text-gray-900 flex items-center space-x-2">
-                <span>🎬</span>
-                <span>SANJEEVANI Platform Walkthrough & Intro</span>
+                <span>Direct Crop Care to Market Connectivity</span>
               </h2>
               <p className="text-xs sm:text-sm text-gray-600 mt-1 font-medium">
-                Watch how SANJEEVANI connects farmers directly to crop buyers, cold storage, transport providers, and AI disease diagnostics.
+                Empowering farmers with AI plant disease diagnostics, daily Mandi price updates, direct verified buyer procurement, and nearby cold storage booking.
               </p>
             </div>
-            <div className="shrink-0 flex items-center space-x-2">
-              <button 
-                onClick={() => setScreen("splash")}
-                className="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-gray-900 font-extrabold text-xs rounded-xl shadow-md transition active:scale-95 flex items-center space-x-2 cursor-pointer"
-              >
-                <span>🎬 Re-Watch Intro Video</span>
-              </button>
+            <div className="shrink-0 flex items-center space-x-3">
               <button 
                 onClick={() => { setScreen("main"); setActiveTab("crop"); }}
-                className="px-5 py-2.5 bg-[#1B4D3E] hover:bg-[#12382c] text-white font-extrabold text-xs rounded-xl shadow-md transition active:scale-95 flex items-center space-x-2"
+                className="px-5 py-2.5 bg-[#15803D] hover:bg-[#11632F] text-white font-extrabold text-xs rounded-xl shadow-md transition active:scale-95 flex items-center space-x-2 cursor-pointer"
               >
-                <span>Try App Live</span>
-                <ArrowRight className="w-4 h-4 text-amber-300" />
+                <Camera className="w-4 h-4 text-amber-300" />
+                <span>Diagnose Crop Free</span>
               </button>
+              <button 
+                onClick={() => { setScreen("main"); setActiveTab("market"); }}
+                className="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-gray-900 font-extrabold text-xs rounded-xl shadow-md transition active:scale-95 flex items-center space-x-2 cursor-pointer border border-amber-300"
+              >
+                <TrendingUp className="w-4 h-4 text-gray-900" />
+                <span>Check Mandi Rates</span>
+              </button>
+            </div>
+          </div>
+
+          {/* 4 ECOSYSTEM HIGHLIGHT PILLARS */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+            <div className="p-4 bg-white rounded-2xl border border-emerald-100 shadow-xs space-y-1">
+              <div className="text-xl">🔬</div>
+              <h4 className="font-extrabold text-xs text-gray-900">AI Plant Doctor</h4>
+              <p className="text-[11px] text-gray-500 leading-snug">Instant leaf photo analysis for early blight, leaf curl & pests with organic remedies.</p>
+            </div>
+
+            <div className="p-4 bg-white rounded-2xl border border-emerald-100 shadow-xs space-y-1">
+              <div className="text-xl">📈</div>
+              <h4 className="font-extrabold text-xs text-gray-900">Real-Time Mandi Rates</h4>
+              <p className="text-[11px] text-gray-500 leading-snug">Track daily crop market prices for Tomato, Chilli, Paddy, Cotton & Onion across Mandi yards.</p>
+            </div>
+
+            <div className="p-4 bg-white rounded-2xl border border-emerald-100 shadow-xs space-y-1">
+              <div className="text-xl">🏢</div>
+              <h4 className="font-extrabold text-xs text-gray-900">Direct Buyer Sales</h4>
+              <p className="text-[11px] text-gray-500 leading-snug">Connect directly with verified business buyers & FPOs with 0% middleman brokerage.</p>
+            </div>
+
+            <div className="p-4 bg-white rounded-2xl border border-emerald-100 shadow-xs space-y-1">
+              <div className="text-xl">❄️</div>
+              <h4 className="font-extrabold text-xs text-gray-900">Cold Storage & Logistics</h4>
+              <p className="text-[11px] text-gray-500 leading-snug">Locate climate-controlled warehouses & book harvesting labor and transport trucks.</p>
             </div>
           </div>
         </div>

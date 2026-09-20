@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 export const DesktopSidebar: React.FC = () => {
-  const { activeTab, setActiveTab, setScreen, screen, t, setIsAiModalOpen } = useApp();
+  const { activeTab, setActiveTab, setScreen, screen, t, setIsAiModalOpen, farmer } = useApp();
 
   const primaryItems = [
     { id: "home", label: t("home"), icon: Home },
@@ -123,12 +123,14 @@ export const DesktopSidebar: React.FC = () => {
       {/* Footer User Badge */}
       <div className="p-4 border-t border-gray-100 bg-gray-50/80">
         <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-sm shadow-xs">
-            R
+          <div className="w-9 h-9 rounded-full bg-[#23451B] text-amber-300 font-extrabold flex items-center justify-center text-sm shadow-xs border border-emerald-400">
+            {farmer.full_name ? farmer.full_name.charAt(0).toUpperCase() : "U"}
           </div>
           <div className="overflow-hidden">
-            <p className="text-xs font-bold text-gray-900 truncate">Ramesh Kumar</p>
-            <p className="text-[10px] text-gray-500 truncate">Guntur, Andhra Pradesh</p>
+            <p className="text-xs font-bold text-gray-900 truncate">{farmer.full_name || "User Profile"}</p>
+            <p className="text-[10px] font-extrabold text-emerald-800 truncate uppercase">
+              {farmer.user_role === "storage" ? "COLD STORAGE" : (farmer.user_role || "farmer").toUpperCase()} • {farmer.district || "Guntur"}
+            </p>
           </div>
         </div>
       </div>
