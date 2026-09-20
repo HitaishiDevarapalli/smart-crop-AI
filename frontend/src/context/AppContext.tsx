@@ -19,6 +19,7 @@ export type ScreenType =
   | "settings";
 
 export type TabType = "home" | "crop" | "market" | "work" | "profile";
+export type MarketSubTabType = "prices" | "buyers" | "fpo" | "storage" | "transport" | "schemes" | "machinery" | "quality";
 
 interface AppContextType {
   language: Language;
@@ -28,6 +29,8 @@ interface AppContextType {
   setScreen: (screen: ScreenType) => void;
   activeTab: TabType;
   setActiveTab: (tab: TabType) => void;
+  marketSubTab: MarketSubTabType;
+  setMarketSubTab: (subTab: MarketSubTabType) => void;
   farmer: FarmerProfile;
   setFarmer: React.Dispatch<React.SetStateAction<FarmerProfile>>;
   isOnline: boolean;
@@ -41,6 +44,8 @@ interface AppContextType {
   setSelectedDiagnosis: (diag: any) => void;
   isAdminAuthenticated: boolean;
   setIsAdminAuthenticated: (auth: boolean) => void;
+  isAuthenticated: boolean;
+  setIsAuthenticated: (auth: boolean) => void;
 }
 
 const defaultFarmer: FarmerProfile = {
@@ -63,12 +68,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return (localStorage.getItem("sanjeevani_lang") as Language) || "en";
   });
 
+  const [isAuthenticated, setIsAuthenticatedState] = useState<boolean>(() => {
+    return localStorage.getItem("sanjeevani_authenticated") === "true";
+  });
+
+  const setIsAuthenticated = (auth: boolean) => {
+    setIsAuthenticatedState(auth);
+    if (auth) {
+      localStorage.setItem("sanjeevani_authenticated", "true");
+    } else {
+      localStorage.removeItem("sanjeevani_authenticated");
+    }
+  };
+
   const [screen, setScreenState] = useState<ScreenType>(() => {
     const search = window.location.search.toLowerCase();
     const hash = window.location.hash.toLowerCase();
     const path = window.location.pathname.toLowerCase();
     if (search.includes("admin") || hash.includes("admin") || path.includes("admin")) {
       return "admin";
+    }
+    const isAuth = localStorage.getItem("sanjeevani_authenticated") === "true";
+    if (!isAuth) {
+      return "splash"; // Plays Intro Video for visitors/unauthenticated users!
     }
     return "landing";
   });
@@ -79,16 +101,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const [activeTab, setActiveTabState] = useState<TabType>("home");
+  const [marketSubTab, setMarketSubTabState] = useState<MarketSubTabType>("prices");
 
   const setActiveTab = (newTab: TabType) => {
     setActiveTabState(newTab);
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   };
 
-  // Scroll to top automatically whenever screen or activeTab changes
+  const setMarketSubTab = (newSubTab: MarketSubTabType) => {
+    setMarketSubTabState(newSubTab);
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  };
+
+  // Scroll to top automatically whenever screen, activeTab, or marketSubTab changes
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-  }, [screen, activeTab]);
+  }, [screen, activeTab, marketSubTab]);
 
   useEffect(() => {
     const checkRoute = () => {
@@ -244,6 +272,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setScreen,
         activeTab,
         setActiveTab,
+        marketSubTab,
+        setMarketSubTab,
         farmer,
         setFarmer,
         isOnline,
@@ -256,7 +286,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         selectedDiagnosis,
         setSelectedDiagnosis,
         isAdminAuthenticated,
-        setIsAdminAuthenticated
+        setIsAdminAuthenticated,
+        isAuthenticated,
+        setIsAuthenticated
       }}
     >
       {children}

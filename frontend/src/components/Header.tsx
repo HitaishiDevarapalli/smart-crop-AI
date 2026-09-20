@@ -15,7 +15,19 @@ import {
 } from "lucide-react";
 
 export const Header: React.FC = () => {
-  const { language, setLanguage, activeTab, setActiveTab, farmer, screen, setScreen, setIsAiModalOpen } = useApp();
+  const { 
+    language, 
+    setLanguage, 
+    activeTab, 
+    setActiveTab, 
+    marketSubTab, 
+    setMarketSubTab, 
+    farmer, 
+    screen, 
+    setScreen, 
+    setIsAiModalOpen 
+  } = useApp();
+  
   const [showLangMenu, setShowLangMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -45,13 +57,13 @@ export const Header: React.FC = () => {
 
   // SEO Smart Search suggestions catalog
   const searchSuggestions = [
-    { title: "Live Guntur Mandi Prices (Tomato, Chilli, Cotton)", target: () => { setScreen("main"); setActiveTab("market"); window.scrollTo(0, 0); }, icon: "📈" },
+    { title: "Live Guntur Mandi Prices (Tomato, Chilli, Cotton)", target: () => { setScreen("main"); setActiveTab("market"); setMarketSubTab("prices"); window.scrollTo(0, 0); }, icon: "📈" },
+    { title: "Direct Buyers & Exporters Directory", target: () => { setScreen("main"); setActiveTab("market"); setMarketSubTab("buyers"); window.scrollTo(0, 0); }, icon: "🤝" },
+    { title: "Book Cold Storage & Transport Facilities", target: () => { setScreen("main"); setActiveTab("market"); setMarketSubTab("storage"); window.scrollTo(0, 0); }, icon: "🏬" },
     { title: "Check Crop Disease with AI Camera Scanner", target: () => { setScreen("main"); setActiveTab("crop"); window.scrollTo(0, 0); }, icon: "📸" },
     { title: "Weather Today & Rain Intelligence", target: () => { setScreen("weather_today"); window.scrollTo(0, 0); }, icon: "⛅" },
     { title: "Farmer Profile & Settings", target: () => { setScreen("main"); setActiveTab("profile"); window.scrollTo(0, 0); }, icon: "👤" },
-    { title: "Book Cold Storage Space (Sri Lakshmi Warehouse)", target: () => { setScreen("main"); setActiveTab("market"); window.scrollTo(0, 0); }, icon: "🏬" },
-    { title: "Hire Farm Workers & Harvesting Labor", target: () => { setScreen("main"); setActiveTab("work"); window.scrollTo(0, 0); }, icon: "👨‍🌾" },
-    { title: "Verified Agricultural Buyers & Exporters", target: () => { setScreen("main"); setActiveTab("market"); window.scrollTo(0, 0); }, icon: "🤝" }
+    { title: "Hire Farm Workers & Harvesting Labor", target: () => { setScreen("main"); setActiveTab("work"); window.scrollTo(0, 0); }, icon: "👨‍🌾" }
   ];
 
   const filteredSuggestions = searchSuggestions.filter(s => 
@@ -64,6 +76,14 @@ export const Header: React.FC = () => {
     const q = searchQuery.toLowerCase();
     if (q.includes("weather") || q.includes("rain") || q.includes("forecast")) {
       setScreen("weather_today");
+    } else if (q.includes("buyer") || q.includes("fpo") || q.includes("sell") || q.includes("purchase")) {
+      setScreen("main");
+      setActiveTab("market");
+      setMarketSubTab("buyers");
+    } else if (q.includes("storage") || q.includes("cold") || q.includes("warehouse") || q.includes("transport") || q.includes("truck")) {
+      setScreen("main");
+      setActiveTab("market");
+      setMarketSubTab("storage");
     } else if (q.includes("crop") || q.includes("leaf") || q.includes("disease") || q.includes("scan")) {
       setScreen("main");
       setActiveTab("crop");
@@ -78,6 +98,7 @@ export const Header: React.FC = () => {
     } else {
       setScreen("main");
       setActiveTab("market");
+      setMarketSubTab("prices");
     }
     window.scrollTo(0, 0);
     setIsSearchFocused(false);
@@ -86,9 +107,9 @@ export const Header: React.FC = () => {
   const navItems = [
     { id: "home", label: "Home", action: () => { setScreen("landing"); window.scrollTo(0, 0); } },
     { id: "crop", label: "Crop Care", action: () => { setScreen("main"); setActiveTab("crop"); window.scrollTo(0, 0); } },
-    { id: "market_prices", label: "Market Prices", action: () => { setScreen("main"); setActiveTab("market"); window.scrollTo(0, 0); } },
-    { id: "buyers_fpos", label: "Buyers & FPOs", action: () => { setScreen("main"); setActiveTab("market"); window.scrollTo(0, 0); } },
-    { id: "storage_logistics", label: "Storage & Logistics", action: () => { setScreen("main"); setActiveTab("market"); window.scrollTo(0, 0); } },
+    { id: "market_prices", label: "Market Prices", action: () => { setScreen("main"); setActiveTab("market"); setMarketSubTab("prices"); window.scrollTo(0, 0); } },
+    { id: "buyers_fpos", label: "Buyers & FPOs", action: () => { setScreen("main"); setActiveTab("market"); setMarketSubTab("buyers"); window.scrollTo(0, 0); } },
+    { id: "storage_logistics", label: "Storage & Logistics", action: () => { setScreen("main"); setActiveTab("market"); setMarketSubTab("storage"); window.scrollTo(0, 0); } },
     { id: "resources", label: "Resources", action: () => { setScreen("resources"); window.scrollTo(0, 0); } },
     { id: "contact", label: "Contact us", action: () => { setScreen("main"); setActiveTab("work"); window.scrollTo(0, 0); } },
     { id: "profile", label: "Profile", action: () => { setScreen("main"); setActiveTab("profile"); window.scrollTo(0, 0); } }
@@ -231,12 +252,14 @@ export const Header: React.FC = () => {
 
       {/* 2. SECONDARY PASTEL FOREST NAV BAR */}
       <div className="bg-[#335328] text-gray-100 py-1.5 border-b border-[#29441F]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center space-x-4 sm:space-x-6 text-xs sm:text-sm font-extrabold overflow-x-auto no-scrollbar">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center space-x-3 sm:space-x-5 text-xs sm:text-sm font-extrabold overflow-x-auto no-scrollbar">
           {navItems.map((item) => {
             const isActive = 
               (item.id === "home" && screen === "landing") || 
               (item.id === "crop" && activeTab === "crop" && screen === "main") || 
-              (item.id === "market_prices" && activeTab === "market" && screen === "main") ||
+              (item.id === "market_prices" && activeTab === "market" && marketSubTab === "prices" && screen === "main") ||
+              (item.id === "buyers_fpos" && activeTab === "market" && (marketSubTab === "buyers" || marketSubTab === "fpo") && screen === "main") ||
+              (item.id === "storage_logistics" && activeTab === "market" && (marketSubTab === "storage" || marketSubTab === "transport") && screen === "main") ||
               (item.id === "resources" && screen === "resources") ||
               (item.id === "contact" && activeTab === "work" && screen === "main") ||
               (item.id === "profile" && ((activeTab === "profile" && screen === "main") || screen === "weather_today" || screen === "settings"));
@@ -247,7 +270,7 @@ export const Header: React.FC = () => {
                 onClick={item.action}
                 className={`py-1 px-3 rounded-xl transition whitespace-nowrap cursor-pointer flex items-center space-x-1 ${
                   isActive
-                    ? "bg-white/20 text-white font-black border-b-2 border-amber-300"
+                    ? "bg-white/20 text-white font-black border-b-2 border-amber-300 shadow-xs"
                     : "hover:text-amber-200 text-stone-200"
                 }`}
               >

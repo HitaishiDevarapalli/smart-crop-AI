@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 export const Profile: React.FC = () => {
-  const { farmer, setFarmer, language, setScreen, setActiveTab, t } = useApp();
+  const { farmer, setFarmer, language, setScreen, setActiveTab, setIsAuthenticated, t } = useApp();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photoUpdated, setPhotoUpdated] = useState(false);
 
@@ -233,6 +233,8 @@ export const Profile: React.FC = () => {
       {/* 5. Logout Button */}
       <button
         onClick={() => {
+          setIsAuthenticated(false);
+          localStorage.removeItem("sanjeevani_authenticated");
           setScreen("auth");
           window.scrollTo(0, 0);
         }}

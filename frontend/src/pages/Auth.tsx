@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 export const Auth: React.FC = () => {
-  const { setScreen, farmer, setFarmer, language, setLanguage, setIsAdminAuthenticated } = useApp();
+  const { setScreen, farmer, setFarmer, language, setLanguage, setIsAdminAuthenticated, setIsAuthenticated } = useApp();
 
   // Mode: login or register
   const [mode, setMode] = useState<"login" | "register">("login");
@@ -117,9 +117,17 @@ export const Auth: React.FC = () => {
       phone_number: identifier.includes("@") ? prev.phone_number : `+91 ${identifier.replace(/\D/g, "")}`
     }));
 
+    setIsAuthenticated(true);
+    localStorage.setItem("sanjeevani_authenticated", "true");
+
     setTimeout(() => {
       setLoading(false);
-      setScreen("profile_setup");
+      if (mode === "register") {
+        setScreen("profile_setup");
+      } else {
+        setScreen("landing");
+      }
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     }, 700);
   };
 

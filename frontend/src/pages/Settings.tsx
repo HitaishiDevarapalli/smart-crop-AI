@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 export const Settings: React.FC = () => {
-  const { farmer, setFarmer, language, setLanguage, setScreen, setActiveTab, t } = useApp();
+  const { farmer, setFarmer, language, setLanguage, setScreen, setActiveTab, setIsAuthenticated, t } = useApp();
 
   // Notification toggles
   const [notifyWeather, setNotifyWeather] = useState(true);
@@ -300,6 +300,8 @@ export const Settings: React.FC = () => {
 
           <button
             onClick={() => {
+              setIsAuthenticated(false);
+              localStorage.removeItem("sanjeevani_authenticated");
               setScreen("auth");
               window.scrollTo(0, 0);
             }}

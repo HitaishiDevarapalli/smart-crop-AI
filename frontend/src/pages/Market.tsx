@@ -35,8 +35,9 @@ import {
 } from "lucide-react";
 
 export const Market: React.FC = () => {
-  const { t, farmer, language } = useApp();
-  const [subTab, setSubTab] = useState<"prices" | "buyers" | "fpo" | "storage" | "transport" | "schemes" | "machinery" | "quality">("prices");
+  const { t, farmer, language, marketSubTab, setMarketSubTab } = useApp();
+  const subTab = marketSubTab;
+  const setSubTab = setMarketSubTab;
   
   // Dynamic Lists State
   const [prices, setPrices] = useState<MarketPrice[]>([]);
