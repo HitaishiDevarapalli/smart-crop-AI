@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useApp } from "../context/AppContext";
-import { Camera, User, MapPin, Sprout, ArrowRight, Check, ShoppingBag, Warehouse, Truck } from "lucide-react";
+import { Camera, User, MapPin, Sprout, ArrowRight, Check, ShoppingBag, Warehouse, Truck, ShieldCheck, FileCheck } from "lucide-react";
 import { CameraModal } from "../components/CameraModal";
 
 export const ProfileSetup: React.FC = () => {
@@ -27,6 +27,18 @@ export const ProfileSetup: React.FC = () => {
   const [cropRequired, setCropRequired] = useState(farmer.crop_required || "Tomato");
   const [minQty, setMinQty] = useState<number>(farmer.min_quantity_tons || 15);
   const [priceOffered, setPriceOffered] = useState<number>(farmer.price_offered || 2900);
+
+  // Buyer KYC Verification Fields
+  const [buyerKycDocType, setBuyerKycDocType] = useState("GSTIN Certificate");
+  const [buyerKycNumber, setBuyerKycNumber] = useState("28AABCU9012K1Z9");
+  const [buyerKycFileName, setBuyerKycFileName] = useState("GSTIN_28AABCU9012K1Z9_CERT.pdf");
+  const kycDocInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleKycFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setBuyerKycFileName(e.target.files[0].name);
+    }
+  };
 
   // Storage specific fields
   const [facilityName, setFacilityName] = useState(farmer.facility_name || "Guntur Central Cold Care");
@@ -277,6 +289,70 @@ export const ProfileSetup: React.FC = () => {
                     className="w-full p-2.5 border border-gray-300 rounded-xl text-xs font-bold text-gray-900"
                     required
                   />
+                </div>
+              </div>
+
+              {/* BUYER KYC VERIFICATION SECTION */}
+              <div className="bg-amber-50/90 border border-amber-300 p-3.5 rounded-xl space-y-3 shadow-xs">
+                <div className="flex items-center justify-between border-b border-amber-200 pb-2">
+                  <div className="flex items-center space-x-1.5 text-amber-900 font-extrabold text-xs">
+                    <ShieldCheck className="w-4 h-4 text-amber-700" />
+                    <span>Buyer Business KYC Verification</span>
+                  </div>
+                  <span className="text-[10px] font-black bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">
+                    PENDING ADMIN REVIEW ⏳
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-amber-950 mb-1">KYC Document Type</label>
+                  <select
+                    value={buyerKycDocType}
+                    onChange={(e) => setBuyerKycDocType(e.target.value)}
+                    className="w-full p-2.5 bg-white border border-amber-300 rounded-xl text-xs font-bold text-gray-900 outline-none focus:border-amber-600"
+                  >
+                    <option value="GSTIN Certificate">GSTIN Certificate (Goods & Services Tax)</option>
+                    <option value="APMC Trade License">APMC Trade License / Mandi Trader Pass</option>
+                    <option value="FSSAI License">FSSAI Food Safety License Certificate</option>
+                    <option value="Company PAN">Company PAN Card & Certificate of Incorporation</option>
+                    <option value="Import-Export Code (IEC)">Import-Export Code (IEC Certificate)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-amber-950 mb-1">KYC / Registration Number</label>
+                  <input
+                    type="text"
+                    value={buyerKycNumber}
+                    onChange={(e) => setBuyerKycNumber(e.target.value)}
+                    placeholder="e.g. 28AABCU9012K1Z9 or APMC-GNT-8810"
+                    className="w-full p-2.5 bg-white border border-amber-300 rounded-xl text-xs font-bold text-gray-900 outline-none focus:border-amber-600"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-amber-950 mb-1">Upload KYC Certificate / Document PDF/Image</label>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      type="button"
+                      onClick={() => kycDocInputRef.current?.click()}
+                      className="flex-1 py-2.5 px-3 bg-white border border-amber-400 text-amber-950 text-xs font-extrabold rounded-xl shadow-xs hover:bg-amber-100 flex items-center justify-center space-x-2 transition cursor-pointer"
+                    >
+                      <FileCheck className="w-4 h-4 text-amber-700" />
+                      <span className="truncate">{buyerKycFileName ? `📄 ${buyerKycFileName}` : "Upload KYC Document File"}</span>
+                    </button>
+                    <input
+                      type="file"
+                      ref={kycDocInputRef}
+                      accept="image/*,application/pdf"
+                      onChange={handleKycFileSelected}
+                      className="hidden"
+                    />
+                  </div>
+                  <p className="text-[10px] text-amber-800 mt-1 font-semibold leading-tight">
+                    * Master Admin will review and verify your submitted business KYC document before bulk trade contract activation.
+                  </p>
                 </div>
               </div>
             </div>
